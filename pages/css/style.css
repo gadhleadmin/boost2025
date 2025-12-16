@@ -1,12 +1,12 @@
 /* --- Global Styles & Variables --- */
 :root {
     /* Primary color (Blue/Teal for trust and stability) */
-    --primary-color: #007bff; /* Madax-xigeen blue for primary calls to action */
-    --secondary-color: #0056b3; /* Darker blue for hover/active */
-    --accent-color: #28a745; /* Green for success/growth (e.g., Invest Now buttons) */
+    --primary-color: #393939; /* Madax-xigeen blue for primary calls to action */
+    --secondary-color: #4b4b4b; /* Darker blue for hover/active */
+    --accent-color: #005ed1; /* Green for success/growth (e.g., Invest Now buttons) */
     --text-color: #333;
     --light-text-color: #f8f9fa;
-    --bg-light: #f4f7f9;
+    --bg-light: #939393;
     --bg-dark: #2c3e50; /* Footer background */
     --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.1);
     --shadow-strong: 0 8px 16px rgba(0, 0, 0, 0.2);
@@ -176,7 +176,7 @@ ul {
 
 /* --- Hero Section --- */
 .hero-section {
-    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('background-image-placeholder.jpg') no-repeat center center/cover;
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://www.pnbmetlife.com/content/dam/pnb-metlife/webp/article/investment-tips.webp') no-repeat center center/cover;
     height: 60vh;
     min-height: 400px;
     display: flex;
