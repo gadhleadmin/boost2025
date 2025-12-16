@@ -134,6 +134,15 @@ ul {
     align-items: center;
 }
 
+.logo-name{
+    display: flex;
+}
+
+.logo-name img{
+  border-radius: 50%;
+}
+
+
 .logo {
     font-size: 1.8em;
     font-weight: 700;
