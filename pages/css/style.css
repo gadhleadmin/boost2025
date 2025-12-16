@@ -223,7 +223,7 @@ ul {
 
 /* --- Hero Section --- */
 .hero-section {
-    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('background-image-placeholder.jpg') no-repeat center center/cover;
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://assetmonk.com/wp-content/uploads/investment.jpg') no-repeat center center/cover;
     height: 60vh;
     min-height: 400px;
     display: flex;
