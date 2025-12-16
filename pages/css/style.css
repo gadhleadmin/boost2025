@@ -66,13 +66,16 @@ ul {
 .btn-primary {
     background-color: var(--primary-color);
     color: var(--light-text-color);
-    box-shadow: 0 4px 10px rgba(0, 123, 255, 0.4);
+    box-shadow: 0 4px 10px rgba(255, 255, 255, 0.4);
 }
 
 .btn-primary:hover {
     background-color: var(--secondary-color);
     transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(0, 123, 255, 0.6);
+    box-shadow: 0 6px 15px rgba(255, 255, 255, 0.6);
+    border: 1px solid white;
+    color: rgb(135, 135, 135);
+    
 }
 
 .btn-secondary {
