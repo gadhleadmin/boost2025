@@ -174,56 +174,9 @@ ul {
     gap: 10px;
 }
 
-.menu-toggle {
-    display: none; /* Hidden on desktop */
-    background: none;
-    border: none;
-    font-size: 1.5em;
-    color: var(--primary-color);
-    cursor: pointer;
-}
-
-/* Mobile Nav (Hidden by default, shown by JS) */
-.mobile-nav {
-    display: none;
-    position: absolute;
-    top: 70px; /* Adjust based on header height */
-    left: 0;
-    width: 100%;
-    background-color: var(--bg-dark);
-    box-shadow: var(--shadow-strong);
-    z-index: 999;
-    padding: 20px 0;
-}
-
-.mobile-nav.open {
-    display: block;
-}
-
-.mobile-nav ul {
-    display: flex;
-    flex-direction: column;
-    text-align: center;
-    gap: 15px;
-}
-
-.mobile-nav a {
-    color: var(--light-text-color);
-    font-size: 1.1em;
-    padding: 10px 0;
-    display: block;
-}
-
-.mobile-btn-signup, .mobile-btn-signin {
-    margin: 10px auto;
-    width: 80%;
-    display: block;
-    padding: 10px 0;
-}
-
 /* --- Hero Section --- */
 .hero-section {
-    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://assetmonk.com/wp-content/uploads/investment.jpg') no-repeat center center/cover;
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('background-image-placeholder.jpg') no-repeat center center/cover;
     height: 60vh;
     min-height: 400px;
     display: flex;
@@ -497,20 +450,21 @@ ul {
     opacity: 0.7;
 }
 
-/* --- 📱 Mobile Responsiveness (Max-width 768px for tablets/mobiles) --- */
+/* --- 📱 Mobile Fixed Bottom Navigation Styles --- */
+.mobile-bottom-nav {
+    display: none; /* Hidden by default, shown only on mobile */
+}
+
 @media (max-width: 768px) {
     
     /* Header & Nav */
     .desktop-nav, .auth-buttons {
         display: none; /* Hide desktop nav and buttons */
     }
-
-    .menu-toggle {
-        display: block; /* Show hamburger menu */
-    }
-
-    .header-content {
-        padding-right: 15px; /* Adjust padding for button */
+    
+    /* Body padding to prevent content from being hidden by the fixed bottom bar */
+    body {
+        padding-bottom: 60px; /* Space equal to the height of the fixed bottom nav */
     }
 
     /* Hero */
@@ -578,5 +532,71 @@ ul {
     
     .social-links {
         justify-content: center;
+    }
+
+    /* Mobile Fixed Bottom Nav Styling */
+    .mobile-bottom-nav {
+        display: flex;
+        position: fixed; /* Make it fixed at the bottom */
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 60px; /* Set a standard height */
+        background-color: #fff; /* White background */
+        border-top: 1px solid #eee;
+        z-index: 1000;
+        justify-content: space-around;
+        align-items: center;
+        box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        flex: 1;
+        padding: 5px;
+    }
+
+    .nav-item a {
+        color: var(--text-color);
+        font-size: 0.75em; /* Smaller font for mobile item labels */
+        font-weight: 500;
+        transition: color 0.2s;
+        text-decoration: none;
+        width: 100%;
+    }
+    
+    .nav-item i {
+        font-size: 1.3em;
+        margin-bottom: 3px;
+        color: #777; /* Default icon color */
+    }
+
+    .nav-item a.active,
+    .nav-item a:hover {
+        color: var(--primary-color);
+    }
+    
+    .nav-item a.active i,
+    .nav-item a:hover i {
+        color: var(--primary-color);
+    }
+    
+    /* Highlight Sign Up button in the bottom nav */
+    .nav-item.signup-item {
+        background-color: var(--primary-color);
+        border-radius: 5px;
+        margin: 5px;
+    }
+    
+    .nav-item.signup-item a {
+        color: var(--light-text-color) !important;
+        font-weight: 600;
+    }
+    
+    .nav-item.signup-item i {
+        color: var(--light-text-color);
     }
 }
