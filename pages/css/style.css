@@ -418,7 +418,7 @@ ul {
 }
 
 .footer-col h4 {
-    color: var(--primary-color);
+    color: var(--light-text-color);
     margin-bottom: 20px;
     font-size: 1.2em;
 }
