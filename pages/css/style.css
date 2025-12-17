@@ -382,6 +382,27 @@ ul {
     font-style: italic;
 }
 
+  .slider {
+    display: flex;
+    overflow: hidden;
+    width: 150px; /* Ballaca container-ka */
+    height: 290px;
+
+  }
+
+  .slider img {
+    width: 300px; /* Sawirka midkiiba */
+    animation: slide-left 15s infinite;
+  }
+
+  /* Animation */
+  @keyframes slide-left {
+    0% { transform: translateX(0); }
+    33% { transform: translateX(-100%); }
+    66% { transform: translateX(-200%); }
+    100% { transform: translateX(0); }
+  }
+
 /* --- Footer --- */
 .main-footer {
     background-color: var(--bg-dark);
