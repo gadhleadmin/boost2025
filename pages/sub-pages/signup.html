@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BoostInvest – Sign Up</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-    
+    <link rel="stylesheet" href="../css/style.css">
     <style>
         :root {
             --primary-color: #002b5c;
@@ -47,6 +47,27 @@
 </head>
 <body>
 
+        <header class="main-header">
+        <div class="container header-content">
+             <div class="logo-name">
+            <img src="./logo.png" alt="main-logo" width="35px">
+            <h1 class="logo">BoostInvest</h1>
+            </div>
+            <nav class="desktop-nav">
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="#about-us">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="auth-buttons">
+                <a href="signup.html" class="btn btn-signup">Sign Up</a>
+                <a href="signin.html" class="btn btn-signin">Sign In</a>
+            </div>
+        </div>
+    </header>
+
+
     <section class="signup-container">
         <div class="signup-card">
             <h3>Create Account</h3>
@@ -82,6 +103,95 @@
             </form>
         </div>
     </section>
+
+    
+    <footer class="main-footer">
+        <div class="container footer-grid">
+            
+            <div class="footer-col about-col">
+                <h4 class="footer-logo">BoostInvest</h4>
+                <p>BoostInvest is a global investment platform designed to help individuals grow their wealth through smart and secure investment solutions.</p>
+                <div class="social-links">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" aria-label="Telegram"><i class="fab fa-telegram-plane"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-col">
+                <h4>📄 Legal</h4>
+                <ul>
+                    <li><a href="#">Terms & Conditions</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Risk Disclosure</a></li>
+                    <li><a href="#">Anti-Money Laundering (AML)</a></li>
+                    <li><a href="#">Know Your Customer (KYC)</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>🔗 Quick Links</h4>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="#about-us">About Us</a></li>
+                    <li><a href="index.html#packages">Investment Plans</a></li>
+                    <li><a href="signup.html">Sign Up</a></li>
+                    <li><a href="signin.html">Sign In</a></li>
+                    <li><a href="#">FAQ</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col" id="contact">
+                <h4>🛠 Support</h4>
+                <ul>
+                    <li><a href="#">Help Center</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="#">Live Chat Support</a></li>
+                    <li>Email: <a href="mailto:support@boostinvest.com">support@boostinvest.com</a></li>
+                </ul>
+            </div>
+
+        </div>
+
+        <div class="footer-bottom">
+            <div class="container">
+                <p class="disclaimer">
+                    ⚠️ **Disclaimer:** BoostInvest does not guarantee fixed profits. All investments carry risk. Users are advised to invest responsibly and only what they can afford to lose.
+                </p>
+                <p class="copyright">
+                    &copy; 2025 BoostInvest. All Rights Reserved.
+                </p>
+            </div>
+        </div>
+    </footer>
+    
+    <nav class="mobile-bottom-nav">
+        <div class="nav-item">
+            <a href="index.html">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+        </div>
+        <div class="nav-item">
+            <a href="index.html#packages">
+                <i class="fas fa-chart-area"></i>
+                <span>Invest</span>
+            </a>
+        </div>
+        <div class="nav-item">
+            <a href="#contact">
+                <i class="fas fa-headset"></i>
+                <span>Support</span>
+            </a>
+        </div>
+        <div class="nav-item signup-item">
+            <a href="signin.html" class="active">
+                <i class="fas fa-sign-in-alt"></i>
+                <span>Sign In</span>
+            </a>
+        </div>
+    </nav>
 
     <script type="module" src="../js/signup.js"></script>
 </body>
