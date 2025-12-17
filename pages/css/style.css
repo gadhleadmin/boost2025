@@ -372,7 +372,7 @@ ul {
     min-width: 250px;
     text-align: center;
     /* Placeholder for the image */
-    background-color: var(--bg-light); 
+    background-color: transparent;
     height: 300px;
     border-radius: 10px;
     display: flex;
