@@ -22,7 +22,7 @@ signinForm.addEventListener('submit', async (e) => {
         if (data.user) {
             alert("Si guul leh ayaad u gashay!");
             // U gudbi bogga dashboard-ka
-            window.location.href = '../sub-pages/user-dasbourd.html';
+            window.location.href = '../sub-pages/user-dashbourd.html';
         }
 
     } catch (error) {
