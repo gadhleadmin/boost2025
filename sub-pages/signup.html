@@ -3,118 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BoostInvest – Sign In</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <title>BoostInvest – Sign Up</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    
+    <link rel="stylesheet" href="../css/style.css">
+       <link rel="icon" href="./logo.png">
     <style>
-        .signin-container {
-            padding: 80px 20px;
-            background-color: var(--bg-light); /* Medium Gray background */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 80vh; /* Hubi inuu foomku xarunta ka jiro xitaa haddii content-ku gaaban yahay */
+        :root {
+            --primary-color: #002b5c;
+            --accent-color: #005ed1;
+            --bg-light: #f4f7f6;
+            --success-color: #28a745;
+            --error-color: #dc3545;
         }
 
-        .signin-card {
-            background: #fff;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: var(--shadow-strong);
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
+        body { font-family: 'Poppins', sans-serif; background-color: var(--bg-light); margin: 0; }
+
+        .signup-container { padding: 60px 20px; display: flex; justify-content: center; }
+
+        .signup-card {
+            background: #fff; padding: 40px; border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            width: 100%; max-width: 450px; text-align: center;
         }
 
-        .signin-card h3 {
-            font-size: 2em;
-            color: var(--primary-color);
-            margin-bottom: 10px;
+        /* Message Box Style */
+        .message {
+            padding: 12px; margin-bottom: 20px; border-radius: 8px;
+            display: none; font-size: 0.9em; font-weight: 600;
+        }
+        .success { background-color: #d4edda; color: var(--success-color); border: 1px solid #c3e6cb; }
+        .error { background-color: #f8d7da; color: var(--error-color); border: 1px solid #f5c6cb; }
+
+        .form-group { margin-bottom: 15px; text-align: left; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 600; }
+        .form-group input, .form-group select {
+            width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box;
         }
 
-        .signin-card p {
-            margin-bottom: 30px;
-            color: #666;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-            text-align: left;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 600;
-            color: var(--text-color);
-            font-size: 0.9em;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            font-size: 1em;
-            transition: border-color 0.3s, box-shadow 0.3s;
-        }
-
-        .form-group input:focus {
-            border-color: var(--accent-color);
-            box-shadow: 0 0 5px rgba(0, 94, 209, 0.4);
-            outline: none;
-        }
-        
-        .forgot-password {
-            text-align: right;
-            margin-bottom: 20px;
-            font-size: 0.9em;
-        }
-
-        .forgot-password a {
-            color: var(--accent-color);
-        }
-
-        /* Ensure the main submit button uses the primary accent color */
         .btn-submit {
-            width: 100%;
-            background-color: var(--accent-color);
-            color: var(--light-text-color);
-            padding: 15px;
-            font-size: 1.1em;
-        }
-
-        .btn-submit:hover {
-            background-color: #0047a0;
-            transform: translateY(-2px);
-        }
-
-        .signup-link {
-            margin-top: 25px;
-            font-size: 0.9em;
-        }
-        
-        .signup-link a {
-            color: var(--accent-color);
-            font-weight: 600;
-        }
-        
-        /* Mobile adjustments for the form */
-        @media (max-width: 480px) {
-            .signin-card {
-                padding: 25px;
-            }
-            .signin-container {
-                padding: 40px 15px 100px; /* Si aan loogu dhegin mobile bottom nav */
-            }
+            width: 100%; background-color: var(--accent-color); color: white;
+            padding: 15px; border: none; border-radius: 8px; cursor: pointer; font-size: 1.1em;
         }
     </style>
 </head>
 <body>
 
-    <header class="main-header">
+        <header class="main-header">
         <div class="container header-content">
              <div class="logo-name">
             <img src="./logo.png" alt="main-logo" width="35px">
@@ -133,39 +68,45 @@
             </div>
         </div>
     </header>
+
+
+    <section class="signup-container">
+        <div class="signup-card">
+            <h3>Create Account</h3>
+            
+            <div id="message-box" class="message"></div>
+
+            <form id="signup-form">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="full-name" required placeholder="Enter your full name">
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="email" required placeholder="example@domain.com">
+                </div>
+                <div class="form-group">
+                    <label>Country</label>
+                    <select id="country" required>
+                        <option value="">Select your country</option>
+                        <option value="SOM">Somalia</option>
+                        <option value="KEN">Kenya</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="password" required placeholder="Min 8 characters">
+                </div>
+                <div class="form-group">
+                    <label>Confirm Password</label>
+                    <input type="password" id="confirm-password" required placeholder="Repeat password">
+                </div>
+                <button type="submit" class="btn-submit">Sign Up Now</button>
+            </form>
+        </div>
+    </section>
+
     
-    <main>
-        <section class="signin-container">
-            <div class="signin-card">
-                <h3>Welcome Back!</h3>
-                <p>Log in to your dashboard and manage your investments.</p>
-
-                <form action="#" method="POST">
-                    
-                    <div class="form-group">
-                        <label for="email">Email or Username</label>
-                        <input type="text" id="email" name="identifier" required placeholder="Enter email or username">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="password">Password</label>
-                        <input type="password" id="password" name="password" required placeholder="Enter your password">
-                    </div>
-                    
-                    <div class="forgot-password">
-                        <a href="#">Forgot Password?</a>
-                    </div>
-
-                    <button type="submit" class="btn btn-submit">Sign In</button>
-                </form>
-
-                <p class="signup-link">
-                    Don't have an account? <a href="signup.html">Sign Up here</a>
-                </p>
-            </div>
-        </section>
-    </main>
-
     <footer class="main-footer">
         <div class="container footer-grid">
             
@@ -253,7 +194,7 @@
             </a>
         </div>
     </nav>
-     <script type="module" src="../js/signin.js"></script>
 
+    <script type="module" src="../js/signup.js"></script>
 </body>
 </html>
