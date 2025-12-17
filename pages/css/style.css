@@ -543,9 +543,23 @@ ul {
 
     .app-image {
         order: -1; /* Move image above text on mobile */
-        height: 250px;
+        height: 350px;
         width: 100%;
     }
+
+     .slider {
+    display: flex;
+    overflow: hidden;
+    width: 150px; /* Ballaca container-ka */
+    height: 340px;
+
+  }
+
+  .slider img {
+    width: 200px; /* Sawirka midkiiba */
+    animation: slide-left 15s infinite;
+  }
+
 
     .app-text .section-title {
         text-align: center;
