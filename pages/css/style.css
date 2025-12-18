@@ -486,6 +486,8 @@ ul {
     }
 
     
+
+    
     /* Body padding to prevent content from being hidden by the fixed bottom bar */
     body {
         padding-bottom: 60px; /* Space equal to the height of the fixed bottom nav */
@@ -636,5 +638,33 @@ ul {
     
     .nav-item.signup-item i {
         color: var(--light-text-color);
+    }
+}
+
+@media (max-width: 500px) {
+ 
+
+    .logo-name{
+        gap: 3px;
+        align-items: center;
+        display: flex;
+    }
+    .logo-name h1{
+        font-size: 1rem;
+    }
+    
+    /* Header & Nav */
+    .desktop-nav {
+        display: none; /* Hide desktop nav and buttons */
+    }
+
+    .auth-buttons {
+        display: flex;
+        gap: 2px;
+    }
+    
+     .auth-buttons a {
+        padding: 2px;
+        font-size: 0.7em;  
     }
 }
