@@ -459,6 +459,16 @@ ul {
 }
 
 @media (max-width: 768px) {
+ 
+
+    .logo-name{
+        gap: 3px;
+        align-items: center;
+        display: flex;
+    }
+    .logo-name h1{
+        font-size: 1.5em;
+    }
     
     /* Header & Nav */
     .desktop-nav {
@@ -467,13 +477,12 @@ ul {
 
     .auth-buttons {
         display: flex;
-        padding: 3px 5px;
         gap: 5px;
     }
     
      .auth-buttons a {
         padding: 6px 12px;
-        font-size: 0.85em;  
+        font-size: 0.7em;  
     }
 
     
