@@ -287,41 +287,11 @@ ul {
     font-weight: 600;
 }
 
-/* --- Company Statistics --- */
-.company-stats {
-    padding: 60px 0;
-    background-color: var(--primary-color);
-    color: var(--light-text-color);
-}
-
-.stats-grid {
-    display: flex;
-    justify-content: space-around;
-    text-align: center;
-    flex-wrap: wrap;
-}
-
-.stat-item {
-    padding: 20px;
-    flex-basis: 30%;
-}
-
-.stat-item i {
-    font-size: 3em;
-    margin-bottom: 10px;
-}
-
-.stat-number {
-    font-size: 2.5em;
-    font-weight: 700;
-    line-height: 1;
-}
-
-.stat-label {
-    font-size: 1em;
-    font-weight: 400;
-    opacity: 0.8;
-}
+/* --- Statistics Section --- */
+        .stats-container { background: var(--primary-color); color: #fff; padding: 80px 0; text-align: center; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; }
+        .stat-card h2 { font-size: 3.5rem; color: var(--accent-color); margin-bottom: 5px; }
+        .stat-card p { font-size: 1.1rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0.8; }
 
 /* --- Mobile App Section --- */
 .mobile-app-section {
