@@ -236,29 +236,38 @@
             </div>
         </section>
 
-        <section id="packages" class="investment-packages dashboard-content">
+        <section id="packages" class="investment-packages">
             <div class="container">
-                <h3 class="section-title">Active Investment Packages</h3>
-                
+                <h3 class="section-title">Investment Packages</h3>
                 <div class="package-grid">
+                    <div class="package-card">
+                        <i class="fas fa-sack-dollar package-icon"></i>
+                        <h4>Standard Plan</h4>
+                        <p class="amount">**$100**</p>
+                        <p class="return-rate">Earn **2% Daily**</p>
+                        <a href="./sub-pages/signin.html" class="btn btn-secondary">Invest Now</a>
+                    </div>
                     <div class="package-card featured">
                         <i class="fas fa-piggy-bank package-icon"></i>
-                        <h4>Premium Plan (Active)</h4>
-                        <p class="amount">$500</p>
-                        <p class="return-rate">Next Payout: 12 Hrs</p>
-                        <a href="#" class="btn btn-secondary">View Details</a>
+                        <h4>Premium Plan</h4>
+                        <p class="amount">**$500**</p>
+                        <p class="return-rate">Earn **2.5% Daily**</p>
+                        <a href="./sub-pages/signin.html" class="btn btn-primary">Invest Now</a>
+                    </div>
+                    <div class="package-card">
+                        <i class="fas fa-chart-line package-icon"></i>
+                        <h4>Gold Plan</h4>
+                        <p class="amount">**$1000**</p>
+                        <p class="return-rate">Earn **3% Daily**</p>
+                        <a href="./sub-pages/signin.html" class="btn btn-secondary">Invest Now</a>
                     </div>
                     <div class="package-card">
                         <i class="fas fa-rocket package-icon"></i>
                         <h4>VIP Plan</h4>
-                        <p class="amount">$3000</p>
-                        <p class="return-rate">Earn **3% Daily**</p>
-                        <a href="#" class="btn btn-primary">Invest Now</a>
+                        <p class="amount">**$3000**</p>
+                        <p class="return-rate">Earn **4% Daily**</p>
+                        <a href="./sub-pages/signin.html" class="btn btn-secondary">Invest Now</a>
                     </div>
-                </div>
-                
-                <div style="text-align: center; margin-top: 40px;">
-                    <a href="#packages-full" class="btn btn-primary">View All Plans</a>
                 </div>
             </div>
         </section>
@@ -371,38 +380,7 @@
     </nav>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // ==========================================================
-            // 1. Smooth Scrolling & Active State Management (Internal)
-            // ==========================================================
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
-                    const targetId = this.getAttribute('href');
-                    
-                    if (targetId.length > 1) { 
-                        e.preventDefault();
-                        const targetElement = document.querySelector(targetId);
-                        
-                        if (targetElement) {
-                            targetElement.scrollIntoView({
-                                behavior: 'smooth'
-                            });
-                        }
-                        
-                        // Maareynta Active State ee Mobile Nav
-                        document.querySelectorAll('.mobile-bottom-nav a').forEach(item => {
-                            item.classList.remove('active');
-                        });
-                        
-                        // Ku dar active class link-ga la riixay
-                        const parentNav = this.closest('.nav-item');
-                        if (parentNav) {
-                            parentNav.querySelector('a').classList.add('active');
-                        }
-                    }
-                });
-            });
-
+        document.addEventListener("DOMContentLoaded", function() {
             // ==========================================================
             // 2. Crypto Price Display (Using Mock Data for reliable rendering)
             // ==========================================================
