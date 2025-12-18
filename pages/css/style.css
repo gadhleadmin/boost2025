@@ -664,7 +664,7 @@ ul {
     }
     
      .auth-buttons a {
-        padding: 2px;
+        padding: 2px 4px;
         font-size: 0.7em;  
     }
 }
