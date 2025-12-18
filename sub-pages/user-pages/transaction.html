@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction History | BoostInvest</title>
+    <link rel="stylesheet" href="../css/style.css"> 
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <style>
+        body { padding-bottom: 80px; background-color: #f4f7f6; }
+
+        /* --- Transaction List --- */
+        .history-container {
+            max-width: 700px;
+            margin: 30px auto;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            padding-bottom: 5px;
+        }
+
+        .filter-btn {
+            background: #fff;
+            border: 1px solid #ddd;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .filter-btn.active { background: var(--accent-color); color: #fff; border-color: var(--accent-color); }
+
+        .trans-card {
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: var(--shadow-light);
+            overflow: hidden;
+        }
+
+        .trans-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid #f9f9f9;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .trans-item:hover { background: #fcfcfc; }
+
+        .trans-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 1.2rem;
+        }
+
+        /* Type Colors */
+        .icon-deposit { background: #e6ffed; color: #22c55e; }
+        .icon-withdraw { background: #fff1f0; color: #ff4d4f; }
+        .icon-reward { background: #e6f7ff; color: #1890ff; }
+        .icon-trade { background: #f9f0ff; color: #722ed1; }
+
+        .trans-info { flex: 1; }
+        .trans-info h4 { font-size: 0.95rem; margin-bottom: 2px; color: var(--primary-color); }
+        .trans-info p { font-size: 0.75rem; color: #888; }
+
+        .trans-amount { text-align: right; font-weight: 700; }
+        .amt-pos { color: #22c55e; }
+        .amt-neg { color: #ff4d4f; }
+
+        /* --- Receipt Modal --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .receipt-card {
+            background: #fff;
+            width: 100%;
+            max-width: 400px;
+            border-radius: 25px;
+            overflow: hidden;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        .receipt-head {
+            padding: 30px;
+            text-align: center;
+            color: #fff;
+        }
+
+        .success-bg { background: #22c55e; }
+        .failed-bg { background: #ff4d4f; }
+
+        .receipt-head i { font-size: 3rem; margin-bottom: 10px; }
+
+        .receipt-content { padding: 25px; }
+        .receipt-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 0.85rem; }
+        .receipt-row span { color: #888; }
+        .receipt-row strong { color: #333; word-break: break-all; text-align: right; margin-left: 10px; }
+
+        .receipt-actions {
+            display: flex;
+            gap: 10px;
+            padding: 20px;
+            background: #f9f9f9;
+        }
+
+        .btn-receipt {
+            flex: 1;
+            padding: 12px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 0.85rem;
+        }
+
+        .btn-dl { background: #333; color: #fff; }
+        .btn-sh { background: var(--accent-color); color: #fff; }
+
+        @media (max-width: 600px) {
+            .history-container { padding: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="container header-content">
+            <h1 class="logo">BoostInvest</h1>
+            <nav class="desktop-nav">
+                <ul>
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                    <li><a href="trade.html">Trade</a></li>
+                    <li><a href="transaction.html" class="active">History</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container history-container">
+        
+        <h2 style="margin-bottom: 20px;">Transactions</h2>
+
+        <div class="filter-bar">
+            <button class="filter-btn active">All</button>
+            <button class="filter-btn">Deposits</button>
+            <button class="filter-btn">Withdrawals</button>
+            <button class="filter-btn">Rewards</button>
+            <button class="filter-btn">Trades</button>
+        </div>
+
+        <div class="trans-card">
+            <div class="trans-item" onclick="openReceipt('Deposit', 'Success', '500.00', 'Dec 18, 2025 - 14:30', 'TB5NK46...wCM', 'TX882910', '0.00')">
+                <div class="trans-icon icon-deposit"><i class="fas fa-arrow-down"></i></div>
+                <div class="trans-info">
+                    <h4>Wallet Deposit</h4>
+                    <p>Dec 18, 2025 • 14:30</p>
+                </div>
+                <div class="trans-amount amt-pos">+500.00 USDT</div>
+            </div>
+
+            <div class="trans-item" onclick="openReceipt('Reward (4%)', 'Success', '20.00', 'Dec 18, 2025 - 14:31', 'Internal', 'RW-99201', '0.00')">
+                <div class="trans-icon icon-reward"><i class="fas fa-gift"></i></div>
+                <div class="trans-info">
+                    <h4>Welcome Reward</h4>
+                    <p>Dec 18, 2025 • 14:31</p>
+                </div>
+                <div class="trans-amount amt-pos">+20.00 USDT</div>
+            </div>
+
+            <div class="trans-item" onclick="openReceipt('Trade Result', 'Success', '5.20', 'Dec 18, 2025 - 17:15', 'BTC/USDT', 'TR-7721', '0.00')">
+                <div class="trans-icon icon-trade"><i class="fas fa-chart-line"></i></div>
+                <div class="trans-info">
+                    <h4>Trade Win (+1%)</h4>
+                    <p>Dec 18, 2025 • 17:15</p>
+                </div>
+                <div class="trans-amount amt-pos">+5.20 USDT</div>
+            </div>
+
+            <div class="trans-item" onclick="openReceipt('Withdraw', 'Success', '200.00', 'Dec 15, 2025 - 09:00', 'T99xs...P99', 'TX110022', '40.00')">
+                <div class="trans-icon icon-withdraw"><i class="fas fa-external-link-alt"></i></div>
+                <div class="trans-info">
+                    <h4>Withdrawal Funds</h4>
+                    <p>Dec 15, 2025 • 09:00</p>
+                </div>
+                <div class="trans-amount amt-neg">-200.00 USDT</div>
+            </div>
+
+            <div class="trans-item" onclick="openReceipt('Deposit', 'Failed', '100.00', 'Dec 12, 2025 - 11:20', 'Unknown', 'TX00000', '0.00')">
+                <div class="trans-icon icon-withdraw" style="background:#fff1f0; color:#ff4d4f;"><i class="fas fa-times"></i></div>
+                <div class="trans-info">
+                    <h4>Deposit Failed</h4>
+                    <p>Dec 12, 2025 • 11:20</p>
+                </div>
+                <div class="trans-amount amt-neg" style="color:#aaa;">0.00 USDT</div>
+            </div>
+        </div>
+
+    </main>
+
+    <div class="modal-overlay" id="modalOverlay" onclick="closeReceipt()">
+        <div class="receipt-card" onclick="event.stopPropagation()">
+            <div class="receipt-head success-bg" id="modalHead">
+                <i class="fas fa-check-circle" id="modalIcon"></i>
+                <h2 id="modalAmt">100 USDT</h2>
+                <p id="modalStatus">Success</p>
+            </div>
+            <div class="receipt-content">
+                <div class="receipt-row"><span>Type:</span> <strong id="modalType">Deposit</strong></div>
+                <div class="receipt-row"><span>Time:</span> <strong id="modalTime">Dec 18, 2025 - 14:30</strong></div>
+                <div class="receipt-row"><span>User ID:</span> <strong>#BI-99204</strong></div>
+                <div class="receipt-row"><span>Wallet:</span> <strong id="modalWallet">TB5NK4...wCM</strong></div>
+                <div class="receipt-row"><span>TXID:</span> <strong id="modalTXID">TX882910</strong></div>
+                <div class="receipt-row"><span>Fee:</span> <strong id="modalFee">0.00 USDT</strong></div>
+            </div>
+            <div class="receipt-actions">
+                <button class="btn-receipt btn-sh"><i class="fas fa-share-alt"></i> Share</button>
+                <button class="btn-receipt btn-dl"><i class="fas fa-download"></i> Download</button>
+            </div>
+        </div>
+    </div>
+
+    <nav class="mobile-bottom-nav">
+        <div class="nav-item"><a href="dashboard.html"><i class="fas fa-home"></i><span>Home</span></a></div>
+        <div class="nav-item"><a href="trade.html"><i class="fas fa-chart-line"></i><span>Trade</span></a></div>
+        <div class="nav-item"><a href="transaction.html" class="active"><i class="fas fa-history"></i><span>History</span></a></div>
+        <div class="nav-item"><a href="account.html"><i class="fas fa-user-circle"></i><span>Account</span></a></div>
+    </nav>
+
+    <script>
+        function openReceipt(type, status, amount, time, wallet, txid, fee) {
+            const overlay = document.getElementById('modalOverlay');
+            const head = document.getElementById('modalHead');
+            const icon = document.getElementById('modalIcon');
+            
+            // Fill Data
+            document.getElementById('modalType').innerText = type;
+            document.getElementById('modalStatus').innerText = status;
+            document.getElementById('modalAmt').innerText = amount + " USDT";
+            document.getElementById('modalTime').innerText = time;
+            document.getElementById('modalWallet').innerText = wallet;
+            document.getElementById('modalTXID').innerText = txid;
+            document.getElementById('modalFee').innerText = fee + " USDT";
+
+            // Status Color Logic
+            if(status === 'Failed') {
+                head.className = 'receipt-head failed-bg';
+                icon.className = 'fas fa-times-circle';
+            } else {
+                head.className = 'receipt-head success-bg';
+                icon.className = 'fas fa-check-circle';
+            }
+
+            overlay.style.display = 'flex';
+        }
+
+        function closeReceipt() {
+            document.getElementById('modalOverlay').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

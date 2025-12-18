@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Withdraw Funds | BoostInvest</title>
+    <link rel="stylesheet" href="./css/styles.css"> 
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <style>
+        body { padding-bottom: 80px; background-color: #f4f7f6; }
+
+        .withdraw-container {
+            max-width: 500px;
+            margin: 40px auto;
+        }
+
+        /* --- Fee Info Card --- */
+        .fee-notice {
+            background: #fff;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--accent-color);
+            font-size: 0.85rem;
+            box-shadow: var(--shadow-light);
+        }
+
+        .fee-item { display: flex; justify-content: space-between; margin-bottom: 5px; }
+        .fee-active { color: var(--accent-color); font-weight: 700; }
+
+        /* --- Withdraw Form --- */
+        .withdraw-card {
+            background: #fff;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: var(--shadow-strong);
+        }
+
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; font-size: 0.9rem; font-weight: 600; margin-bottom: 8px; color: var(--primary-color); }
+        .input-group input { 
+            width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; outline: none;
+        }
+
+        /* --- Receipt Design --- */
+        #receipt-view {
+            display: none;
+            background: #fff;
+            padding: 0;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow-strong);
+            text-align: center;
+        }
+
+        .receipt-header {
+            background: #22c55e;
+            color: white;
+            padding: 40px 20px;
+        }
+
+        .check-circle {
+            width: 70px;
+            height: 70px;
+            background: #fff;
+            color: #22c55e;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            margin: 0 auto 15px;
+        }
+
+        .receipt-body { padding: 30px; text-align: left; }
+        .receipt-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px dashed #eee; font-size: 0.9rem; }
+        .receipt-row strong { color: #333; }
+        .receipt-row span { color: #666; }
+
+        .receipt-footer {
+            padding: 20px;
+            background: #f9f9f9;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-download { flex: 1; background: #333; color: #fff; border: none; padding: 12px; border-radius: 8px; cursor: pointer; }
+        .btn-share { flex: 1; background: var(--accent-color); color: #fff; border: none; padding: 12px; border-radius: 8px; cursor: pointer; }
+
+        /* Pending Status Animation */
+        #pending-view {
+            display: none;
+            text-align: center;
+            padding: 50px 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="container header-content">
+              <div class="logo-name">
+            <img src="../logo.png" alt="main-logo" width="35px">
+            <h1 class="logo">BoostInvest</h1>
+            </div>
+        
+            <div class="auth-buttons">
+                <a href="#" class="btn btn-signin">Log Out</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container withdraw-container">
+        
+        <div id="withdraw-form-view">
+            <h2 style="margin-bottom: 10px; text-align: center;">Withdraw Funds</h2>
+            
+            <div class="fee-notice">
+                <div class="fee-item">
+                    <span>Standard Fee (< 2x Profit)</span>
+                    <span id="high-fee">20%</span>
+                </div>
+                <div class="fee-item">
+                    <span>Loyalty Fee (≥ 2x Profit)</span>
+                    <span id="low-fee">5%</span>
+                </div>
+                <p style="margin-top: 10px; font-size: 0.75rem; color: #888;">* Fee is automatically deducted from the total amount.</p>
+            </div>
+
+            <div class="withdraw-card">
+                <form onsubmit="handleWithdraw(event)">
+                    <div class="input-group">
+                        <label>Withdrawal Amount (USDT)</label>
+                        <input type="number" id="amount" placeholder="Min 10 USDT" required oninput="calculateFee()">
+                    </div>
+
+                    <div class="input-group">
+                        <label>USDT Wallet Address (TRC20)</label>
+                        <input type="text" id="wallet" placeholder="T..." required>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Account Password</label>
+                        <input type="password" required>
+                    </div>
+
+                    <div id="fee-preview" style="margin-bottom: 20px; font-size: 0.9rem; color: #555;">
+                        Estimated Fee: <strong id="calc-fee">0.00 USDT</strong>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 15px;">DONE</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="pending-view">
+            <i class="fas fa-clock fa-spin" style="font-size: 3rem; color: var(--accent-color); margin-bottom: 20px;"></i>
+            <h3>Withdrawal Pending</h3>
+            <p style="color: #666;">Awaiting system approval. Processing receipt...</p>
+        </div>
+
+        <div id="receipt-view">
+            <div class="receipt-header">
+                <div class="check-circle"><i class="fas fa-check"></i></div>
+                <h2 id="r-amount">2000 USDT</h2>
+                <p>Withdrawal Successful</p>
+            </div>
+            
+            <div class="receipt-body">
+                <div class="receipt-row"><span>User ID:</span> <strong id="r-id">#BI-99204</strong></div>
+                <div class="receipt-row"><span>Full Name:</span> <strong id="r-name">John Doe</strong></div>
+                <div class="receipt-row"><span>Transaction ID:</span> <strong id="r-txid">TX8829...441</strong></div>
+                <div class="receipt-row"><span>Wallet Address:</span> <strong id="r-wallet">T...</strong></div>
+                <div class="receipt-row"><span>Fee Deducted:</span> <strong id="r-fee" style="color: #ef4444;">-0.00 USDT</strong></div>
+                <div class="receipt-row" style="border: none; margin-top: 10px;"><span>Status:</span> <strong style="color: #22c55e;">Awaiting Approval</strong></div>
+            </div>
+
+            <div class="receipt-footer">
+                <button class="btn-share"><i class="fas fa-share-alt"></i> Share</button>
+                <button class="btn-download"><i class="fas fa-download"></i> Download (.JPG)</button>
+            </div>
+        </div>
+
+    </main>
+
+     <footer class="main-footer" style="margin-top: 50px;">
+        <div class="container">
+            <p style="text-align: center; opacity: 0.7;">&copy; 2025 BoostInvest. Secure Asset Management.</p>
+        </div>
+    </footer>
+
+    <nav class="mobile-bottom-nav">
+        <div class="nav-item"><a href="dashboard.html"><i class="fas fa-home"></i><span>Home</span></a></div>
+        <div class="nav-item"><a href="trade.html"><i class="fas fa-chart-line"></i><span>Trade</span></a></div>
+        <div class="nav-item"><a href="teams.html"><i class="fas fa-users-line"></i><span>Teams</span></a></div>
+        <div class="nav-item"><a href="account.html" class="active"><i class="fas fa-user-circle"></i><span>Account</span></a></div>
+    </nav>
+
+    <script>
+        // Dummy values for logic (In real app, these come from your database)
+        const userInvestment = 500;
+        const userEarnings = 1200; // Total earnings
+
+        function calculateFee() {
+            const amount = document.getElementById('amount').value;
+            const feePreview = document.getElementById('calc-fee');
+            
+            if (!amount) {
+                feePreview.innerText = "0.00 USDT";
+                return;
+            }
+
+            // Logic: Earnings < 2x investment -> 20% fee, else 5%
+            const feePercent = (userEarnings < (userInvestment * 2)) ? 0.20 : 0.05;
+            const feeAmount = amount * feePercent;
+            
+            feePreview.innerText = feeAmount.toFixed(2) + " USDT (" + (feePercent * 100) + "%)";
+            return feeAmount.toFixed(2);
+        }
+
+        function handleWithdraw(e) {
+            e.preventDefault();
+            const amount = document.getElementById('amount').value;
+            const wallet = document.getElementById('wallet').value;
+            const finalFee = calculateFee();
+
+            // 1. Show Pending State
+            document.getElementById('withdraw-form-view').style.display = 'none';
+            document.getElementById('pending-view').style.display = 'block';
+
+            // 2. Simulate Processing (3 seconds)
+            setTimeout(() => {
+                document.getElementById('pending-view').style.display = 'none';
+                document.getElementById('receipt-view').style.display = 'block';
+                
+                // Fill Receipt
+                document.getElementById('r-amount').innerText = amount + " USDT";
+                document.getElementById('r-wallet').innerText = wallet.substring(0,6) + "..." + wallet.slice(-4);
+                document.getElementById('r-fee').innerText = "-" + finalFee + " USDT";
+                document.getElementById('r-txid').innerText = "TX" + Math.random().toString(36).substring(2, 10).toUpperCase();
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

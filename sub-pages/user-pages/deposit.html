@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deposit Funds | BoostInvest</title>
+    <link rel="stylesheet" href="./css/styles.css"> 
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <style>
+        body { padding-bottom: 80px; background-color: #f4f7f6; }
+
+        /* --- Deposit Card --- */
+        .deposit-container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: var(--shadow-strong);
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+
+        .step { font-size: 0.75rem; font-weight: 700; color: #ccc; text-transform: uppercase; }
+        .step.active { color: var(--accent-color); border-bottom: 2px solid var(--accent-color); }
+
+        /* --- Payment Details --- */
+        .payment-info-box {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 5px solid var(--accent-color);
+            margin-bottom: 25px;
+        }
+
+        .address-box {
+            background: #fff;
+            border: 1px solid #ddd;
+            padding: 12px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            word-break: break-all;
+        }
+
+        .address-box code { font-family: monospace; font-size: 0.9rem; font-weight: 600; color: #333; }
+
+        /* --- Form Inputs --- */
+        .input-group { margin-bottom: 20px; }
+        .input-group label { display: block; font-size: 0.9rem; font-weight: 600; margin-bottom: 8px; color: var(--primary-color); }
+        .input-group input { 
+            width: 100%; 
+            padding: 12px; 
+            border: 1px solid #ddd; 
+            border-radius: 8px; 
+            font-size: 1rem;
+            outline: none;
+            transition: 0.3s;
+        }
+        .input-group input:focus { border-color: var(--accent-color); box-shadow: 0 0 5px rgba(0, 112, 243, 0.2); }
+
+        /* --- Status Display --- */
+        #status-display {
+            text-align: center;
+            padding: 40px 20px;
+            display: none;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid var(--accent-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .status-waiting { color: #856404; background: #fff3cd; padding: 20px; border-radius: 10px; }
+        .status-confirmed { color: #155724; background: #d4edda; padding: 20px; border-radius: 10px; display: none; }
+
+        /* --- Bonus Notice --- */
+        .bonus-badge {
+            background: var(--primary-color);
+            color: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            margin-top: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="container header-content">
+              <div class="logo-name">
+            <img src="../logo.png" alt="main-logo" width="35px">
+            <h1 class="logo">BoostInvest</h1>
+            </div>
+        
+            <div class="auth-buttons">
+                <a href="#" class="btn btn-signin">Log Out</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        
+        <div class="deposit-container">
+            
+            <div id="deposit-form-view">
+                <div class="step-indicator">
+                    <span class="step">1. Select Package</span>
+                    <span class="step active">2. Transfer</span>
+                    <span class="step">3. Confirm</span>
+                </div>
+
+                <h2 style="margin-bottom: 10px;">Deposit USDT</h2>
+                <p style="color: #666; font-size: 0.9rem; margin-bottom: 25px;">Please send the exact amount to the address below.</p>
+
+                <div class="payment-info-box">
+                    <label style="font-size: 0.75rem; text-transform: uppercase; color: #888;">Accepted Currency</label>
+                    <p><strong>USDT (TRC20 Network)</strong></p>
+                    
+                    <label style="font-size: 0.75rem; text-transform: uppercase; color: #888; display: block; margin-top: 15px;">Official Wallet Address</label>
+                    <div class="address-box">
+                        <code id="walletAddr">TB5NK46FSHFNEpou5CXtAHxdayGW6r7wCM</code>
+                        <button onclick="copyAddr()" style="background: none; border: none; color: var(--accent-color); cursor: pointer;" id="copyBtn">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <form id="depositForm" onsubmit="submitDeposit(event)">
+                    <div class="input-group">
+                        <label>Referral Code <span style="color: red;">*</span></label>
+                        <input type="text" placeholder="Enter valid referral code" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Withdrawal Hash (TXID) <span style="color: red;">*</span></label>
+                        <input type="text" id="txid" placeholder="Paste your transaction hash here" required>
+                    </div>
+
+                    <div class="bonus-badge">
+                        <i class="fas fa-gift"></i>
+                        <span>You will receive a <strong>4% Welcome Bonus</strong> automatically upon confirmation!</span>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 15px; margin-top: 25px; font-size: 1rem;">COMPLETED</button>
+                </form>
+            </div>
+
+            <div id="status-display">
+                
+                <div id="waiting-state">
+                    <div class="spinner"></div>
+                    <div class="status-waiting">
+                        <h3>Waiting for Verification...</h3>
+                        <p>Payment is being verified. Please wait up to 2 hours for the blockchain network to confirm.</p>
+                    </div>
+                    <p style="margin-top: 20px; font-size: 0.8rem; color: #888;">TXID: <span id="display-txid"></span></p>
+                </div>
+
+                <div id="confirmed-state" class="status-confirmed">
+                    <i class="fas fa-check-circle" style="font-size: 3rem; margin-bottom: 15px;"></i>
+                    <h2>Investment Confirmed!</h2>
+                    <p>Your funds have been added to your active package. Your 4% bonus has also been credited.</p>
+                    <a href="dashboard.html" class="btn btn-primary" style="margin-top: 20px; display: inline-block;">Go to Dashboard</a>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+     <footer class="main-footer" style="margin-top: 50px;">
+        <div class="container">
+            <p style="text-align: center; opacity: 0.7;">&copy; 2025 BoostInvest. Secure Asset Management.</p>
+        </div>
+    </footer>
+
+    <nav class="mobile-bottom-nav">
+        <div class="nav-item"><a href="dashboard.html"><i class="fas fa-home"></i><span>Home</span></a></div>
+        <div class="nav-item"><a href="trade.html"><i class="fas fa-chart-line"></i><span>Trade</span></a></div>
+        <div class="nav-item"><a href="teams.html"><i class="fas fa-users-line"></i><span>Teams</span></a></div>
+        <div class="nav-item"><a href="account.html"><i class="fas fa-user-circle"></i><span>Account</span></a></div>
+    </nav>
+
+    <script>
+        function copyAddr() {
+            const addr = document.getElementById("walletAddr").innerText;
+            navigator.clipboard.writeText(addr);
+            const btn = document.getElementById("copyBtn");
+            btn.innerHTML = '<i class="fas fa-check" style="color: #22c55e;"></i>';
+            setTimeout(() => { btn.innerHTML = '<i class="fas fa-copy"></i>'; }, 2000);
+        }
+
+        function submitDeposit(e) {
+            e.preventDefault();
+            const txidValue = document.getElementById("txid").value;
+
+            // 1. Hide Form
+            document.getElementById("deposit-form-view").style.display = "none";
+            
+            // 2. Show Waiting Status
+            document.getElementById("status-display").style.display = "block";
+            document.getElementById("display-txid").innerText = txidValue;
+
+            // 3. Simulate System Confirmation (After 10 seconds for demo)
+            setTimeout(() => {
+                document.getElementById("waiting-state").style.display = "none";
+                document.getElementById("confirmed-state").style.display = "block";
+            }, 10000); 
+        }
+    </script>
+</body>
+</html>
