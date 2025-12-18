@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us | BoostInvest - Global Investment Leader</title>
+    <link rel="stylesheet" href="../pages/css/style.css"> 
+    <link rel="icon" href="../images/logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <style>
+        /* --- Enhanced About Page Styles --- */
+        :root {
+            --transition: all 0.3s ease-in-out;
+        }
+
+        body { padding-bottom: 80px; }
+
+        .about-hero {
+            background: linear-gradient(rgba(20, 20, 20, 0.85), rgba(0, 94, 209, 0.4)), url('https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&q=80&w=1500');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed; /* Parallax Effect */
+            color: #fff;
+            padding: 150px 20px;
+            text-align: center;
+        }
+
+        .about-hero h1 { font-size: 3.5rem; font-weight: 700; margin-bottom: 15px; letter-spacing: -1px; }
+        .about-hero p { font-size: 1.25rem; max-width: 800px; margin: 0 auto; opacity: 0.9; line-height: 1.6; }
+
+        .section-header { text-align: center; margin-bottom: 60px; }
+        .section-header h2 { font-size: 2.5rem; color: var(--primary-color); }
+        .section-header .underline { width: 80px; height: 4px; background: var(--accent-color); margin: 15px auto; border-radius: 2px; }
+
+        /* --- Story Section --- */
+        .story-section { padding: 100px 0; display: flex; align-items: center; gap: 60px; flex-wrap: wrap; }
+        .story-content { flex: 1; min-width: 350px; }
+        .story-content p { color: #555; line-height: 1.8; margin-bottom: 20px; font-size: 1.1rem; }
+        .story-image { flex: 1; min-width: 350px; position: relative; }
+        .story-image img { width: 100%; border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+        
+        /* --- Why Choose Us (Icon Grid) --- */
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; padding: 50px 0; }
+        .feature-item { text-align: center; padding: 40px; background: #fff; border-radius: 15px; transition: var(--transition); border: 1px solid #eee; }
+        .feature-item:hover { transform: translateY(-10px); box-shadow: var(--shadow-strong); border-color: var(--accent-color); }
+        .feature-item i { font-size: 3rem; color: var(--accent-color); margin-bottom: 20px; }
+        .feature-item h3 { margin-bottom: 15px; color: var(--primary-color); }
+
+        /* --- Animated Stats --- */
+        .stats-container { background: var(--primary-color); color: #fff; padding: 80px 0; text-align: center; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; }
+        .stat-card h2 { font-size: 3.5rem; color: var(--accent-color); margin-bottom: 5px; }
+        .stat-card p { font-size: 1.1rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0.8; }
+
+        /* --- Roadmap (Timeline) --- */
+        .roadmap-container { background: #f9f9f9; padding: 100px 0; }
+        .timeline { position: relative; max-width: 800px; margin: 0 auto; }
+        .timeline::after { content: ''; position: absolute; width: 4px; background: #ddd; top: 0; bottom: 0; left: 50%; margin-left: -2px; }
+        .time-node { padding: 10px 40px; position: relative; background: inherit; width: 50%; }
+        .time-node::after { content: ''; position: absolute; width: 20px; height: 20px; right: -10px; background-color: var(--accent-color); border: 4px solid #fff; top: 15px; border-radius: 50%; z-index: 1; }
+        .left { left: 0; text-align: right; }
+        .right { left: 50%; }
+        .right::after { left: -10px; }
+        .time-content { padding: 20px; background: #fff; border-radius: 10px; box-shadow: var(--shadow-light); }
+        .time-content h4 { color: var(--accent-color); margin-bottom: 5px; }
+
+        /* --- Team Section --- */
+        .team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 30px; margin-top: 40px; }
+        .team-member { text-align: center; }
+        .team-member img { width: 180px; height: 180px; border-radius: 50%; object-fit: cover; margin-bottom: 15px; border: 5px solid #eee; }
+        .team-member h4 { color: var(--primary-color); font-size: 1.2rem; }
+        .team-member p { color: var(--accent-color); font-weight: 600; font-size: 0.9rem; }
+
+        /* --- CTA Section --- */
+        .cta-box { background: var(--accent-color); color: #fff; padding: 80px 40px; border-radius: 20px; text-align: center; margin: 100px 0; }
+        .cta-box h2 { font-size: 2.5rem; margin-bottom: 20px; }
+
+        @media (max-width: 768px) {
+            .about-hero h1 { font-size: 2.5rem; }
+            .timeline::after { left: 31px; }
+            .time-node { width: 100%; padding-left: 70px; padding-right: 25px; text-align: left; }
+            .time-node::after { left: 21px; }
+            .right { left: 0%; }
+        }
+    </style>
+</head>
+<body>
+
+   <header class="main-header">
+        <div class="container header-content">
+            <div class="logo-name">
+            <img src="../images/logo.png" alt="main-logo" width="35px">
+            <h1 class="logo">BoostInvest</h1>
+            </div>
+            <nav class="desktop-nav">
+                <ul>
+                    <li><a href="#home" class="active">Home</a></li>
+                    <li><a href="#about-us">About</a></li>
+                </ul>
+            </nav>
+            <div class="auth-buttons">
+                <a href="./signup.html" class="btn btn-signup">Sign Up</a>
+                <a href="./signin.html" class="btn btn-signin">Sign In</a>
+            </div>
+            </div>
+    </header>
+
+    <main>
+        <section class="about-hero">
+            <div class="container">
+                <h1>Redefining Financial Wealth</h1>
+                <p>Building a transparent, secure, and highly profitable investment ecosystem for the digital age.</p>
+            </div>
+        </section>
+
+        <section class="container story-section">
+            <div class="story-content">
+                <div class="section-header" style="text-align: left;">
+                    <h2>Our Foundation</h2>
+                    <div class="underline" style="margin: 15px 0;"></div>
+                </div>
+                <p>Founded in 2023, BoostInvest emerged from a simple observation: the world of high-yield investing was too complicated and lacked transparency for the average person.</p>
+                <p>We gathered top-tier financial analysts and blockchain engineers to build a platform that bridges the gap between traditional finance and the decentralized future. Today, we serve thousands of clients globally, helping them grow their capital with peace of mind.</p>
+                <p>At BoostInvest, your success is our primary metric. We don't just manage assets; we build legacies.</p>
+            </div>
+            <div class="story-image">
+                <img src="https://images.unsplash.com/photo-1556761175-b413da4baf72?auto=format&fit=crop&q=80&w=800" alt="Office Culture">
+            </div>
+        </section>
+
+        <section class="stats-container">
+            <div class="container stats-grid">
+                <div class="stat-card">
+                    <h2 class="counter" data-target="15000">0</h2>
+                    <p>Global Investors</p>
+                </div>
+                <div class="stat-card">
+                    <h2 class="counter" data-target="85">0</h2>
+                    <p>Million Assets</p>
+                </div>
+                <div class="stat-card">
+                    <h2 class="counter" data-target="100">0</h2>
+                    <p>Secure Payouts (%)</p>
+                </div>
+                <div class="stat-card">
+                    <h2 class="counter" data-target="24">0</h2>
+                    <p>Support Hours</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="container section-padding">
+            <div class="section-header">
+                <h2>Why Choose BoostInvest?</h2>
+                <div class="underline"></div>
+            </div>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <i class="fas fa-shield-alt"></i>
+                    <h3>Maximum Security</h3>
+                    <p>We use military-grade encryption and multi-sig cold storage to ensure your funds are always safe.</p>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Smart Yields</h3>
+                    <p>Our AI-driven trading algorithms analyze market trends 24/7 to maximize your investment returns.</p>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-search-dollar"></i>
+                    <h3>Total Transparency</h3>
+                    <p>No hidden fees. No fine print. Every transaction and profit share is visible in your real-time dashboard.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="roadmap-container">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Our Journey & Future</h2>
+                    <div class="underline"></div>
+                </div>
+                <div class="timeline">
+                    <div class="time-node left">
+                        <div class="time-content">
+                            <h4>Q1 2023</h4>
+                            <p>BoostInvest Concept Launched & Seed Funding Secured.</p>
+                        </div>
+                    </div>
+                    <div class="time-node right">
+                        <div class="time-content">
+                            <h4>Q4 2023</h4>
+                            <p>Global Beta Release: Reached 5,000 active investors.</p>
+                        </div>
+                    </div>
+                    <div class="time-node left">
+                        <div class="time-content">
+                            <h4>Q2 2024</h4>
+                            <p>AI Integration: Automated portfolio rebalancing launched.</p>
+                        </div>
+                    </div>
+                    <div class="time-node right">
+                        <div class="time-content">
+                            <h4>2025 & Beyond</h4>
+                            <p>Expanding into Real Estate Tokenization and Global Banking Licenses.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="container section-padding">
+            <div class="section-header">
+                <h2>The Minds Behind the Vision</h2>
+                <div class="underline"></div>
+            </div>
+            <div class="team-grid">
+                <div class="team-member">
+                    <img src="https://i.pravatar.cc/150?u=1" alt="CEO">
+                    <h4>Alex Sterling</h4>
+                    <p>Founder & CEO</p>
+                </div>
+                <div class="team-member">
+                    <img src="https://i.pravatar.cc/150?u=2" alt="CTO">
+                    <h4>Sarah Chen</h4>
+                    <p>Chief Tech Officer</p>
+                </div>
+                <div class="team-member">
+                    <img src="https://i.pravatar.cc/150?u=3" alt="CFO">
+                    <h4>Marcus Vane</h4>
+                    <p>Head of Investment</p>
+                </div>
+                <div class="team-member">
+                    <img src="https://i.pravatar.cc/150?u=4" alt="Support">
+                    <h4>Elena Rodriguez</h4>
+                    <p>Client Relations</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="container">
+            <div class="cta-box">
+                <h2>Ready to grow your wealth?</h2>
+                <p style="margin-bottom: 30px; font-size: 1.2rem;">Join 15,000+ investors who trust BoostInvest every day.</p>
+                <a href="./signup.html" class="btn btn-signin" style="padding: 15px 40px; font-size: 1.2rem; background: #fff; color: var(--accent-color);">Get Started Now</a>
+            </div>
+        </section>
+    </main>
+
+ <footer class="main-footer">
+        <div class="container footer-grid">
+            
+            <div class="footer-col about-col">
+                <h4 class="footer-logo">BoostInvest</h4>
+                <p>BoostInvest is a global investment platform designed to help individuals grow their wealth through smart and secure investment solutions.</p>
+                <div class="social-links">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" aria-label="Telegram"><i class="fab fa-telegram-plane"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-col">
+                <h4>📄 Legal</h4>
+                <ul>
+                    <li><a href="#">Terms & Conditions</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Risk Disclosure</a></li>
+                    <li><a href="#">Anti-Money Laundering (AML)</a></li>
+                    <li><a href="#">Know Your Customer (KYC)</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>🔗 Quick Links</h4>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#about-us">About Us</a></li>
+                    <li><a href="#packages">Investment Plans</a></li>
+                    <li><a href="#">Sign Up</a></li>
+                    <li><a href="#">Sign In</a></li>
+                    <li><a href="#">FAQ</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col" id="contact">
+                <h4>🛠 Support</h4>
+                <ul>
+                    <li><a href="#">Help Center</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="t.me/">Live Chat Support</a></li>
+                    <li>Email: <a href="mailto:support@boostinvest.com">support@boostinvest.com</a></li>
+                </ul>
+            </div>
+
+        </div>
+
+        <div class="footer-bottom">
+            <div class="container">
+                <p class="disclaimer">
+                    ⚠️ **Disclaimer:** BoostInvest does not guarantee fixed profits. All investments carry risk. Users are advised to invest responsibly and only what they can afford to lose.
+                </p>
+                <p class="copyright">
+                    &copy; 2025 BoostInvest. All Rights Reserved.
+                </p>
+            </div>
+        </div>
+    </footer>
+    
+    <nav class="mobile-bottom-nav">
+        <div class="nav-item">
+            <a href="#home" class="active">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </a>
+        </div>
+        <div class="nav-item">
+            <a href="./signin.html">
+                <i class="fas fa-chart-area"></i>
+                <span>Invest</span>
+            </a>
+        </div>
+        <div class="nav-item">
+            <a href="#contact">
+                <i class="fas fa-headset"></i>
+                <span>Support</span>
+            </a>
+        </div>
+        <div class="nav-item signin-item">
+            <a href="./signin.html">
+                <i class="fas fa-user-plus"></i>
+                <span>Sign In</span>
+            </a>
+        </div>
+    </nav>
+
+
+    <script>
+        const counters = document.querySelectorAll('.counter');
+        const speed = 200;
+
+        const startCounters = () => {
+            counters.forEach(counter => {
+                const updateCount = () => {
+                    const target = +counter.getAttribute('data-target');
+                    const count = +counter.innerText;
+                    const inc = target / speed;
+
+                    if (count < target) {
+                        counter.innerText = Math.ceil(count + inc);
+                        setTimeout(updateCount, 15);
+                    } else {
+                        counter.innerText = target + (target === 85 ? "M+" : "+");
+                    }
+                };
+                updateCount();
+            });
+        }
+
+        // Trigger animation when section is in view
+        const observer = new IntersectionObserver((entries) => {
+            if(entries[0].isIntersecting) startCounters();
+        }, { threshold: 0.5 });
+
+        observer.observe(document.querySelector('.stats-container'));
+    </script>
+</body>
+</html>

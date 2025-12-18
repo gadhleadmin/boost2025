@@ -20,7 +20,7 @@
             <nav class="desktop-nav">
                 <ul>
                     <li><a href="#home" class="active">Home</a></li>
-                    <li><a href="#about-us">About</a></li>
+                    <li><a href="./sub-pages/about.html">About</a></li>
                 </ul>
             </nav>
             <div class="auth-buttons">
@@ -35,7 +35,7 @@
             <div class="container hero-content">
                 <h2>Welcome to **BoostInvest** – a reliable global investment platform.</h2>
                 <p>Start today and grow your money daily with confidence and security.</p>
-                <a href="./pages/sub-pages/signin.html" class="btn btn-primary btn-large">Start Investing Now <i class="fas fa-arrow-right"></i></a>
+                <a href="./sub-pages/signin.html" class="btn btn-primary btn-large">Start Investing Now <i class="fas fa-arrow-right"></i></a>
             </div>
         </section>
 
@@ -48,28 +48,28 @@
                         <h4>Standard Plan</h4>
                         <p class="amount">**$100**</p>
                         <p class="return-rate">Earn **2% Daily**</p>
-                        <a href="./pages/sub-pages/signin.html" class="btn btn-secondary">Invest Now</a>
+                        <a href="./sub-pages/signin.html" class="btn btn-secondary">Invest Now</a>
                     </div>
                     <div class="package-card featured">
                         <i class="fas fa-piggy-bank package-icon"></i>
                         <h4>Premium Plan</h4>
                         <p class="amount">**$500**</p>
                         <p class="return-rate">Earn **2.5% Daily**</p>
-                        <a href="./pages/sub-pages/signin.html" class="btn btn-primary">Invest Now</a>
+                        <a href="./sub-pages/signin.html" class="btn btn-primary">Invest Now</a>
                     </div>
                     <div class="package-card">
                         <i class="fas fa-chart-line package-icon"></i>
                         <h4>Gold Plan</h4>
                         <p class="amount">**$1000**</p>
                         <p class="return-rate">Earn **3% Daily**</p>
-                        <a href="./pages/sub-pages/signin.html" class="btn btn-secondary">Invest Now</a>
+                        <a href="./sub-pages/signin.html" class="btn btn-secondary">Invest Now</a>
                     </div>
                     <div class="package-card">
                         <i class="fas fa-rocket package-icon"></i>
                         <h4>VIP Plan</h4>
                         <p class="amount">**$3000**</p>
                         <p class="return-rate">Earn **4% Daily**</p>
-                        <a href="./pages/sub-pages/signin.html" class="btn btn-secondary">Invest Now</a>
+                        <a href="./sub-pages/signin.html" class="btn btn-secondary">Invest Now</a>
                     </div>
                 </div>
             </div>
@@ -91,6 +91,27 @@
                     <i class="fas fa-globe-americas"></i>
                     <p class="stat-number">64</p>
                     <p class="stat-label">Active Countries</p>
+                </div>
+            </div>
+        </section>
+
+                <section class="stats-container">
+            <div class="container stats-grid">
+                <div class="stat-card">
+                    <h2 class="counter" data-target="15000">0</h2>
+                    <p>Global Investors</p>
+                </div>
+                <div class="stat-card">
+                    <h2 class="counter" data-target="85">0</h2>
+                    <p>Million Assets</p>
+                </div>
+                <div class="stat-card">
+                    <h2 class="counter" data-target="100">0</h2>
+                    <p>Secure Payouts (%)</p>
+                </div>
+                <div class="stat-card">
+                    <h2 class="counter" data-target="24">0</h2>
+                    <p>Support Hours</p>
                 </div>
             </div>
         </section>
@@ -204,5 +225,34 @@
     </nav>
 
     <script src="./pages/js/script.js"></script>
+     <script>
+        const counters = document.querySelectorAll('.counter');
+        const speed = 200;
+
+        const startCounters = () => {
+            counters.forEach(counter => {
+                const updateCount = () => {
+                    const target = +counter.getAttribute('data-target');
+                    const count = +counter.innerText;
+                    const inc = target / speed;
+
+                    if (count < target) {
+                        counter.innerText = Math.ceil(count + inc);
+                        setTimeout(updateCount, 15);
+                    } else {
+                        counter.innerText = target + (target === 85 ? "M+" : "+");
+                    }
+                };
+                updateCount();
+            });
+        }
+
+        // Trigger animation when section is in view
+        const observer = new IntersectionObserver((entries) => {
+            if(entries[0].isIntersecting) startCounters();
+        }, { threshold: 0.5 });
+
+        observer.observe(document.querySelector('.stats-container'));
+    </script>
 </body>
 </html>
