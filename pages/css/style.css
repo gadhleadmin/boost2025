@@ -680,5 +680,11 @@ ul {
     color: var(--accent-color);
     margin-bottom: 20px;
 }
-    
+        .package-grid {
+        grid-template-columns: 1fr 1fr; /* Stack packages vertically */
+    }
+
+    .package-card {
+        padding: 10px;
+    }
 }
