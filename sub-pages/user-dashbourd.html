@@ -406,7 +406,7 @@
         </div>
     </nav>
 
-    <script type="module"> // Hubi inuu yahay type="module" maadaama aad import isticmaalayso
+    <script type="module">
 import { supabase } from '../db/supabase.js';
 
 document.addEventListener("DOMContentLoaded", async function() {
@@ -415,29 +415,34 @@ document.addEventListener("DOMContentLoaded", async function() {
     const { data: { user }, error: authError } = await supabase.auth.getUser();
 
     if (authError || !user) {
+        // Haddii uusan login ahayn, u celi bogga signin
         window.location.href = '../sub-pages/signin.html';
         return;
     }
 
-    // --- DHANKAN KA EEG: Soo bandhigidda ID-ga ---
-    // Waxaan soo qaadaynaa 6-da xaraf ee ugu dambeeya ID-ga si uusan aad u dheeraan
-    const shortId = user.id.substring(0, 8).toUpperCase(); 
-    document.getElementById('user-id-display').textContent = shortId;
-    // --------------------------------------------
-
-    // 2. Soo qaad xogta Profile-ka (Magaca)
-    const { data: profile } = await supabase
+    // 2. Soo qaad xogta Profile-ka (Full Name & Referral Code)
+    const { data: profile, error: profileError } = await supabase
         .from('profiles')
-        .select('full_name')
+        .select('full_name, referral_code')
         .eq('id', user.id)
         .single();
 
-    if (profile && document.getElementById('user-greeting')) {
-        document.getElementById('user-greeting').textContent = `Welcome, ${profile.full_name.split(' ')[0]}!`;
+    if (profile) {
+        // Bandhigidda Magaca (Greeting)
+        const greetingElement = document.getElementById('user-greeting');
+        if (greetingElement) {
+            greetingElement.textContent = `Welcome, ${profile.full_name.split(' ')[0]}!`;
+        }
+
+        // Bandhigidda Referral Code-ka (Halkan ayaad ka codsatay)
+        const idDisplay = document.getElementById('user-id-display');
+        if (idDisplay) {
+            idDisplay.textContent = profile.referral_code || "N/A";
+        }
     }
 
-    // 3. Soo qaad xogta Account-ka
-    const { data: account, error: accError } = await supabase
+    // 3. Soo qaad xogta Account-ka (Balance & Earnings)
+    const { data: account } = await supabase
         .from('accounts')
         .select('*')
         .eq('id', user.id)
@@ -449,16 +454,24 @@ document.addEventListener("DOMContentLoaded", async function() {
         document.getElementById('active-package-name').textContent = account.active_package || 'None';
     }
 
-    // 4. Log Out
-    const logoutBtn = document.querySelector('.btn-signin');
+    // 4. Log Out Button (Shaqaynaya)
+    const logoutBtn = document.querySelector('.btn-signin'); 
     if (logoutBtn) {
         logoutBtn.addEventListener('click', async (e) => {
-            e.preventDefault();
-            const { error } = await supabase.auth.signOut();
-            if (!error) window.location.href = '../index.html';
+            e.preventDefault(); // Ka jooji inuu Link ahaan u shaqeeyo
+            
+            const confirmLogout = confirm("Ma hubtaa inaad rabto inaad baxdo?");
+            if (confirmLogout) {
+                const { error } = await supabase.auth.signOut();
+                if (!error) {
+                    window.location.href = '../index.html'; // Ku celi bogga hore
+                } else {
+                    alert("Cilad ayaa dhacday markii la baxayay: " + error.message);
+                }
+            }
         });
     }
 });
-</script>
+</script> 
 </body>
 </html>
