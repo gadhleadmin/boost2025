@@ -9,33 +9,26 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
     <style>
-        body { padding-bottom: 80px; background-color: #f4f7f6; }
+        body { padding-bottom: 80px; background-color: #f4f7f6; font-family: 'Poppins', sans-serif; }
 
-        /* --- Deposit Card --- */
         .deposit-container {
             max-width: 600px;
             margin: 40px auto;
             background: #fff;
             padding: 30px;
             border-radius: 20px;
-            box-shadow: var(--shadow-strong);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
         }
 
-        .step-indicator {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 30px;
-        }
-
+        .step-indicator { display: flex; justify-content: space-between; margin-bottom: 30px; }
         .step { font-size: 0.75rem; font-weight: 700; color: #ccc; text-transform: uppercase; }
-        .step.active { color: var(--accent-color); border-bottom: 2px solid var(--accent-color); }
+        .step.active { color: #1a2a6c; border-bottom: 2px solid #1a2a6c; }
 
-        /* --- Payment Details --- */
         .payment-info-box {
             background: #f8f9fa;
             padding: 20px;
             border-radius: 12px;
-            border-left: 5px solid var(--accent-color);
+            border-left: 5px solid #1a2a6c;
             margin-bottom: 25px;
         }
 
@@ -48,58 +41,25 @@
             justify-content: space-between;
             align-items: center;
             margin-top: 10px;
-            word-break: break-all;
         }
 
-        .address-box code { font-family: monospace; font-size: 0.9rem; font-weight: 600; color: #333; }
-
-        /* --- Form Inputs --- */
         .input-group { margin-bottom: 20px; }
-        .input-group label { display: block; font-size: 0.9rem; font-weight: 600; margin-bottom: 8px; color: var(--primary-color); }
-        .input-group input { 
-            width: 100%; 
-            padding: 12px; 
-            border: 1px solid #ddd; 
-            border-radius: 8px; 
-            font-size: 1rem;
-            outline: none;
-            transition: 0.3s;
-        }
-        .input-group input:focus { border-color: var(--accent-color); box-shadow: 0 0 5px rgba(0, 112, 243, 0.2); }
-
-        /* --- Status Display --- */
-        #status-display {
-            text-align: center;
-            padding: 40px 20px;
-            display: none;
+        .input-group label { display: block; font-size: 0.9rem; font-weight: 600; margin-bottom: 8px; color: #333; }
+        .input-group input, .input-group select { 
+            width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; outline: none;
         }
 
-        .spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid var(--accent-color);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
+        #status-display { text-align: center; padding: 40px 20px; display: none; }
+
+        .status-success-box {
+            text-align: center; padding: 40px 20px; background: #f0fdf4; border-radius: 20px; border: 1px solid #bbf7d0;
         }
-
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        .status-waiting { color: #856404; background: #fff3cd; padding: 20px; border-radius: 10px; }
-        .status-confirmed { color: #155724; background: #d4edda; padding: 20px; border-radius: 10px; display: none; }
-
-        /* --- Bonus Notice --- */
+        .success-icon { font-size: 4rem; color: #22c55e; margin-bottom: 20px; animation: scaleIn 0.5s ease-out; }
+        @keyframes scaleIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
+        
         .bonus-badge {
-            background: var(--primary-color);
-            color: #fff;
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            margin-top: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            background: #1a2a6c; color: #fff; padding: 12px; border-radius: 8px; font-size: 0.85rem;
+            margin-top: 15px; display: flex; align-items: center; gap: 10px;
         }
     </style>
 </head>
@@ -107,19 +67,17 @@
 
     <header class="main-header">
         <div class="container header-content">
-              <div class="logo-name">
-            <img src="../logo.png" alt="main-logo" width="35px">
-            <h1 class="logo">BoostInvest</h1>
+            <div class="logo-name">
+                <img src="../logo.png" alt="main-logo" width="35px">
+                <h1 class="logo">BoostInvest</h1>
             </div>
-        
             <div class="auth-buttons">
-                <a href="#" class="btn btn-signin">Log Out</a>
+                <a href="#" id="logoutBtn" class="btn btn-signin">Log Out</a>
             </div>
         </div>
     </header>
 
     <main class="container">
-        
         <div class="deposit-container">
             
             <div id="deposit-form-view">
@@ -139,16 +97,22 @@
                     <label style="font-size: 0.75rem; text-transform: uppercase; color: #888; display: block; margin-top: 15px;">Official Wallet Address</label>
                     <div class="address-box">
                         <code id="walletAddr">TB5NK46FSHFNEpou5CXtAHxdayGW6r7wCM</code>
-                        <button onclick="copyAddr()" style="background: none; border: none; color: var(--accent-color); cursor: pointer;" id="copyBtn">
+                        <button onclick="copyAddr()" style="background: none; border: none; color: #1a2a6c; cursor: pointer;" id="copyBtn">
                             <i class="fas fa-copy"></i>
                         </button>
                     </div>
                 </div>
 
-                <form id="depositForm" onsubmit="submitDeposit(event)">
+                <form id="depositForm">
                     <div class="input-group">
-                        <label>Referral Code <span style="color: red;">*</span></label>
-                        <input type="text" placeholder="Enter valid referral code" required>
+                        <label>Select Package <span style="color: red;">*</span></label>
+                        <select id="packageSelect" required>
+                            <option value="" disabled selected>Select your investment package</option>
+                            <option value="package1">$100 (2% Daily)</option>
+                            <option value="package2">$500 (2.5% Daily)</option>
+                            <option value="package3">$1000 (3% Daily)</option>
+                            <option value="package4">$3000+ (4% Daily)</option>
+                        </select>
                     </div>
 
                     <div class="input-group">
@@ -161,49 +125,18 @@
                         <span>You will receive a <strong>4% Welcome Bonus</strong> automatically upon confirmation!</span>
                     </div>
 
-                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 15px; margin-top: 25px; font-size: 1rem;">COMPLETED</button>
+                    <button type="submit" id="submitBtn" class="btn btn-primary" style="width: 100%; padding: 15px; margin-top: 25px; font-size: 1rem; background: #1a2a6c; color: #fff; border: none; border-radius: 8px; cursor: pointer;">COMPLETED</button>
                 </form>
             </div>
 
-            <div id="status-display">
-                
-                <div id="waiting-state">
-                    <div class="spinner"></div>
-                    <div class="status-waiting">
-                        <h3>Waiting for Verification...</h3>
-                        <p>Payment is being verified. Please wait up to 2 hours for the blockchain network to confirm.</p>
-                    </div>
-                    <p style="margin-top: 20px; font-size: 0.8rem; color: #888;">TXID: <span id="display-txid"></span></p>
-                </div>
-
-                <div id="confirmed-state" class="status-confirmed">
-                    <i class="fas fa-check-circle" style="font-size: 3rem; margin-bottom: 15px;"></i>
-                    <h2>Investment Confirmed!</h2>
-                    <p>Your funds have been added to your active package. Your 4% bonus has also been credited.</p>
-                    <a href="dashboard.html" class="btn btn-primary" style="margin-top: 20px; display: inline-block;">Go to Dashboard</a>
-                </div>
-
-            </div>
-
+            <div id="status-display"></div>
         </div>
-
     </main>
 
-     <footer class="main-footer" style="margin-top: 50px;">
-        <div class="container">
-            <p style="text-align: center; opacity: 0.7;">&copy; 2025 BoostInvest. Secure Asset Management.</p>
-        </div>
-    </footer>
+    <script type="module">
+        import { supabase } from '../pages/db/supabase.js';
 
-    <nav class="mobile-bottom-nav">
-        <div class="nav-item"><a href="dashboard.html"><i class="fas fa-home"></i><span>Home</span></a></div>
-        <div class="nav-item"><a href="trade.html"><i class="fas fa-chart-line"></i><span>Trade</span></a></div>
-        <div class="nav-item"><a href="teams.html"><i class="fas fa-users-line"></i><span>Teams</span></a></div>
-        <div class="nav-item"><a href="account.html"><i class="fas fa-user-circle"></i><span>Account</span></a></div>
-    </nav>
-
-    <script>
-        function copyAddr() {
+        window.copyAddr = function() {
             const addr = document.getElementById("walletAddr").innerText;
             navigator.clipboard.writeText(addr);
             const btn = document.getElementById("copyBtn");
@@ -211,23 +144,55 @@
             setTimeout(() => { btn.innerHTML = '<i class="fas fa-copy"></i>'; }, 2000);
         }
 
-        function submitDeposit(e) {
+        document.getElementById('depositForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const txidValue = document.getElementById("txid").value;
-
-            // 1. Hide Form
-            document.getElementById("deposit-form-view").style.display = "none";
             
-            // 2. Show Waiting Status
-            document.getElementById("status-display").style.display = "block";
-            document.getElementById("display-txid").innerText = txidValue;
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
 
-            // 3. Simulate System Confirmation (After 10 seconds for demo)
-            setTimeout(() => {
-                document.getElementById("waiting-state").style.display = "none";
-                document.getElementById("confirmed-state").style.display = "block";
-            }, 10000); 
-        }
+            const { data: { user } } = await supabase.auth.getUser();
+            const packageSelected = document.getElementById('packageSelect').value;
+            const txid = document.getElementById("txid").value;
+
+            const amounts = { 'package1': 100, 'package2': 500, 'package3': 1000, 'package4': 3000 };
+            const amount = amounts[packageSelected];
+
+            // Insert into Supabase (Status: Pending)
+            const { error } = await supabase.from('deposits').insert([
+                { 
+                    user_id: user.id, 
+                    amount: amount, 
+                    package_selected: packageSelected, 
+                    txid: txid,
+                    status: 'Pending' 
+                }
+            ]);
+
+            if (error) {
+                alert("Error: " + error.message);
+                submitBtn.disabled = false;
+                submitBtn.innerText = 'COMPLETED';
+                return;
+            }
+
+            document.getElementById("deposit-form-view").style.display = "none";
+            const statusDisplay = document.getElementById("status-display");
+            statusDisplay.style.display = "block";
+            
+            statusDisplay.innerHTML = `
+                <div class="status-success-box">
+                    <div class="success-icon"><i class="fas fa-check-circle"></i></div>
+                    <h2 class="status-title">Completed Successfully!</h2>
+                    <p class="status-text">Your deposit request has been submitted. <br> 
+                    <strong>Please wait for admin confirmation.</strong> <br> 
+                    Your account balance will update after verification.</p>
+                    <hr style="margin: 20px 0; opacity: 0.1;">
+                    <p style="font-size: 0.8rem; color: #64748b;">TXID: ${txid}</p>
+                    <a href="dashboard.html" class="btn btn-primary" style="margin-top: 20px; display: inline-block; padding: 10px 25px; background: #1a2a6c; color: #fff; text-decoration: none; border-radius: 5px;">Back to Dashboard</a>
+                </div>
+            `;
+        });
     </script>
 </body>
 </html>
