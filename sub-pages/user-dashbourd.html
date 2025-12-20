@@ -200,9 +200,9 @@
                     </ul>
             </nav>
             <div class="auth-buttons">
-                <a href="#" class="btn btn-secondary">Welcome, User!</a>
-                <a href="#" class="btn btn-signin">Log Out</a>
-            </div>
+                <a href="#" class="btn btn-secondary">ID: <span id="user-id-display">...</span></a>
+                 <a href="#" class="btn btn-signin">Log Out</a>
+           </div>
         </div>
     </header>
     
@@ -406,8 +406,8 @@
         </div>
     </nav>
 
-    <script>
-     import { supabase } from '../db/supabase.js';
+    <script type="module"> // Hubi inuu yahay type="module" maadaama aad import isticmaalayso
+import { supabase } from '../db/supabase.js';
 
 document.addEventListener("DOMContentLoaded", async function() {
     
@@ -415,10 +415,15 @@ document.addEventListener("DOMContentLoaded", async function() {
     const { data: { user }, error: authError } = await supabase.auth.getUser();
 
     if (authError || !user) {
-        // Haddii uusan login ahayn, u celi bogga login-ka
         window.location.href = '../sub-pages/signin.html';
         return;
     }
+
+    // --- DHANKAN KA EEG: Soo bandhigidda ID-ga ---
+    // Waxaan soo qaadaynaa 6-da xaraf ee ugu dambeeya ID-ga si uusan aad u dheeraan
+    const shortId = user.id.substring(0, 8).toUpperCase(); 
+    document.getElementById('user-id-display').textContent = shortId;
+    // --------------------------------------------
 
     // 2. Soo qaad xogta Profile-ka (Magaca)
     const { data: profile } = await supabase
@@ -427,37 +432,33 @@ document.addEventListener("DOMContentLoaded", async function() {
         .eq('id', user.id)
         .single();
 
-    if (profile) {
+    if (profile && document.getElementById('user-greeting')) {
         document.getElementById('user-greeting').textContent = `Welcome, ${profile.full_name.split(' ')[0]}!`;
     }
 
-    // 3. Soo qaad xogta Account-ka (Balance, Earnings, Package)
+    // 3. Soo qaad xogta Account-ka
     const { data: account, error: accError } = await supabase
         .from('accounts')
         .select('*')
         .eq('id', user.id)
         .single();
 
-    if (accError) {
-        console.error("Cilad Account:", accError.message);
-    } else if (account) {
-        // Ku bandhig xogta dashboard-ka
+    if (account) {
         document.getElementById('balance-amount').textContent = `$${account.account_balance.toFixed(2)}`;
         document.getElementById('earnings-amount').textContent = `$${account.earnings.toFixed(2)}`;
         document.getElementById('active-package-name').textContent = account.active_package || 'None';
     }
 
-    // 4. Log Out Functionality
-    const logoutBtn = document.querySelector('.btn-signin'); // Hubi in class-kani sax yahay
-    logoutBtn.addEventListener('click', async (e) => {
-        e.preventDefault();
-        const { error } = await supabase.auth.signOut();
-        if (!error) window.location.href = '../index.html';
-    });
-
-    // --- Halkan ku dhex hay koodkaagii Crypto Prices ---
-    renderCryptoPrices(); 
+    // 4. Log Out
+    const logoutBtn = document.querySelector('.btn-signin');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            const { error } = await supabase.auth.signOut();
+            if (!error) window.location.href = '../index.html';
+        });
+    }
 });
-    </script>
+</script>
 </body>
 </html>
