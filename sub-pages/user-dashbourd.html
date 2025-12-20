@@ -246,6 +246,22 @@
                 </div>
             </div>
         </section>
+        <section class="account-summary" style="padding: 20px 0; background: #f4f4f4;">
+    <div class="container" style="display: flex; gap: 20px; flex-wrap: wrap;">
+        <div class="crypto-card" style="flex: 1; min-width: 200px;">
+            <p>Account Balance</p>
+            <h2 id="balance-amount">$0.00</h2>
+        </div>
+        <div class="crypto-card" style="flex: 1; min-width: 200px; border-left-color: #28a745;">
+            <p>Total Earnings</p>
+            <h2 id="earnings-amount">$0.00</h2>
+        </div>
+        <div class="crypto-card" style="flex: 1; min-width: 200px; border-left-color: #ffc107;">
+            <p>Active Package</p>
+            <h2 id="active-package-name">None</h2>
+        </div>
+    </div>
+</section>
 
         <section id="packages" class="investment-packages">
             <div class="container">
@@ -391,60 +407,57 @@
     </nav>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            // ==========================================================
-            // 2. Crypto Price Display (Using Mock Data for reliable rendering)
-            // ==========================================================
-            const cryptoListElement = document.getElementById('crypto-price-list');
-            
-            // Mock Data Array (Qaabkan wuxuu hubinayaa in design-ku u shaqeeyo si kaamil ah)
-            const mockCryptoData = [
-                { name: "Bitcoin", symbol: "BTC", priceUsd: 68500.25, changePercent24Hr: 3.45 },
-                { name: "Ethereum", symbol: "ETH", priceUsd: 4100.78, changePercent24Hr: 1.12 },
-                { name: "Solana", symbol: "SOL", priceUsd: 155.90, changePercent24Hr: -2.80 },
-                { name: "Ripple", symbol: "XRP", priceUsd: 0.62, changePercent24Hr: 0.55 },
-                { name: "Cardano", symbol: "ADA", priceUsd: 0.58, changePercent24Hr: -1.40 },
-                { name: "Dogecoin", symbol: "DOGE", priceUsd: 0.15, changePercent24Hr: 5.10 }
-            ];
+     import { supabase } from '../db/supabase.js';
 
-            function renderCryptoPrices() {
-                try {
-                    let html = '';
-                    
-                    mockCryptoData.forEach(coin => {
-                        const priceUSD = parseFloat(coin.priceUsd).toFixed(2);
-                        const change24h = parseFloat(coin.changePercent24Hr).toFixed(2);
-                        const changeClass = change24h >= 0 ? 'text-success' : 'text-danger';
-                        const changeIcon = change24h >= 0 ? '<i class="fas fa-caret-up"></i>' : '<i class="fas fa-caret-down"></i>';
-                        
-                        // Crypto Card Design
-                        html += `
-                            <div class="crypto-card">
-                                <div class="card-header">
-                                    <span class="coin-symbol">${coin.symbol}</span>
-                                    <span class="coin-name">${coin.name}</span>
-                                </div>
-                                <div class="card-body">
-                                    <span class="price">$${priceUSD}</span>
-                                    <span class="change ${changeClass}">
-                                        ${changeIcon} ${change24h}%
-                                    </span>
-                                </div>
-                            </div>
-                        `;
-                    });
+document.addEventListener("DOMContentLoaded", async function() {
+    
+    // 1. Hubi inuu qofku Login yahay
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
 
-                    cryptoListElement.innerHTML = html;
+    if (authError || !user) {
+        // Haddii uusan login ahayn, u celi bogga login-ka
+        window.location.href = '../sub-pages/signin.html';
+        return;
+    }
 
-                } catch (error) {
-                    console.error("Error rendering crypto prices:", error);
-                    cryptoListElement.innerHTML = `<p style="text-align: center; color: #dc3545; grid-column: 1 / -1;">Failed to display mock prices.</p>`;
-                }
-            }
+    // 2. Soo qaad xogta Profile-ka (Magaca)
+    const { data: profile } = await supabase
+        .from('profiles')
+        .select('full_name')
+        .eq('id', user.id)
+        .single();
 
-            // Ku soo wac shaqada marka boggu furmo
-            renderCryptoPrices();
-        });
+    if (profile) {
+        document.getElementById('user-greeting').textContent = `Welcome, ${profile.full_name.split(' ')[0]}!`;
+    }
+
+    // 3. Soo qaad xogta Account-ka (Balance, Earnings, Package)
+    const { data: account, error: accError } = await supabase
+        .from('accounts')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+    if (accError) {
+        console.error("Cilad Account:", accError.message);
+    } else if (account) {
+        // Ku bandhig xogta dashboard-ka
+        document.getElementById('balance-amount').textContent = `$${account.account_balance.toFixed(2)}`;
+        document.getElementById('earnings-amount').textContent = `$${account.earnings.toFixed(2)}`;
+        document.getElementById('active-package-name').textContent = account.active_package || 'None';
+    }
+
+    // 4. Log Out Functionality
+    const logoutBtn = document.querySelector('.btn-signin'); // Hubi in class-kani sax yahay
+    logoutBtn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const { error } = await supabase.auth.signOut();
+        if (!error) window.location.href = '../index.html';
+    });
+
+    // --- Halkan ku dhex hay koodkaagii Crypto Prices ---
+    renderCryptoPrices(); 
+});
     </script>
 </body>
 </html>
