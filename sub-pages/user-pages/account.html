@@ -4,255 +4,216 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Account | BoostInvest</title>
-    <link rel="stylesheet" href="./css/styles.css"> 
+    <link rel="stylesheet" href="../user-pages/css/styles.css"> 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
     <style>
         body { padding-bottom: 80px; background-color: #f4f7f6; }
-
-        /* --- Asset Section (Wallet Look) --- */
         .asset-card {
-            background: linear-gradient(135deg, var(--primary-color) 0%, #2c3e50 100%);
-            color: white;
-            padding: 30px;
-            border-radius: 20px;
-            margin-top: 30px;
-            box-shadow: var(--shadow-strong);
-            text-align: center;
+            background: linear-gradient(135deg, #1a2a6c 0%, #2c3e50 100%);
+            color: white; padding: 30px; border-radius: 20px; margin-top: 30px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1); text-align: center;
         }
-
-        .balance-label { font-size: 0.9rem; opacity: 0.8; text-transform: uppercase; letter-spacing: 1px; }
         .total-balance { font-size: 2.8rem; font-weight: 700; margin: 10px 0; }
-        
-        .asset-details {
-            display: flex;
-            justify-content: space-around;
-            border-top: 1px solid rgba(255,255,255,0.1);
-            padding-top: 20px;
-            margin-top: 20px;
-        }
-
-        .asset-info h4 { font-size: 0.8rem; opacity: 0.7; margin-bottom: 5px; }
-        .asset-info p { font-size: 1.2rem; font-weight: 600; }
-
-        /* --- Quick Buttons --- */
-        .account-actions {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
-            margin: 25px 0;
-        }
-
+        .account-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 25px 0; }
         .action-btn {
-            background: #fff;
-            padding: 15px;
-            border-radius: 12px;
-            text-align: center;
-            text-decoration: none;
-            color: var(--primary-color);
-            font-weight: 600;
-            box-shadow: var(--shadow-light);
-            transition: 0.3s;
-            border: 1px solid #eee;
+            background: #fff; padding: 15px; border-radius: 12px; text-align: center;
+            text-decoration: none; color: #333; font-weight: 600; box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
-
-        .action-btn:hover { background: var(--accent-color); color: #fff; transform: translateY(-3px); }
-        .action-btn i { display: block; font-size: 1.4rem; margin-bottom: 8px; color: var(--accent-color); }
-        .action-btn:hover i { color: #fff; }
-
-        /* --- Profile & KYC Section --- */
-        .account-grid {
-            display: grid;
-            grid-template-columns: 1.5fr 1fr;
-            gap: 30px;
-            margin-top: 20px;
+        .account-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px; margin-top: 20px; }
+        .profile-card, .kyc-card { background: #fff; padding: 25px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        .status-badge { background: #fff3cd; color: #856404; padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 700; }
+        
+        /* Spinner & Loading */
+        .spinner {
+            display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%; border-top-color: #fff; animation: spin 0.8s linear infinite; margin-right: 8px;
         }
-
-        .profile-card, .kyc-card {
-            background: #fff;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: var(--shadow-light);
-        }
-
-        .card-title {
-            font-size: 1.2rem;
-            color: var(--primary-color);
-            margin-bottom: 20px;
-            border-bottom: 2px solid #f0f0f0;
-            padding-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .info-group { margin-bottom: 15px; }
-        .info-group label { display: block; font-size: 0.8rem; color: #888; margin-bottom: 2px; }
-        .info-group p { font-size: 1rem; font-weight: 600; color: var(--text-color); }
-
-        /* --- KYC Upload --- */
-        .kyc-upload-box {
-            border: 2px dashed #ddd;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            text-align: center;
-            transition: 0.3s;
-        }
-
-        .kyc-upload-box:hover { border-color: var(--accent-color); background: #f9fcff; }
-        .kyc-upload-box i { font-size: 1.5rem; color: #aaa; margin-bottom: 10px; }
-        .kyc-upload-box input { display: none; }
-        .kyc-upload-box label { cursor: pointer; color: var(--accent-color); font-weight: 600; font-size: 0.9rem; }
-
-        .btn-submit-kyc {
-            width: 100%;
-            background: var(--primary-color);
-            color: #fff;
-            border: none;
-            padding: 12px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        .status-badge {
-            background: #fff3cd;
-            color: #856404;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-
-        @media (max-width: 768px) {
-            .account-grid { grid-template-columns: 1fr; }
-            .total-balance { font-size: 2.2rem; }
-        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loading { opacity: 0.7; pointer-events: none; }
     </style>
 </head>
 <body>
 
     <header class="main-header">
         <div class="container header-content">
-              <div class="logo-name">
-            <img src="../logo.png" alt="main-logo" width="35px">
-            <h1 class="logo">BoostInvest</h1>
+            <div class="logo-name">
+                <img src="../logo.png" alt="main-logo" width="35px">
+                <h1 class="logo">BoostInvest</h1>
             </div>
-        
             <div class="auth-buttons">
-                <a href="#" class="btn btn-signin">Log Out</a>
+                <a href="#" class="btn btn-secondary" id="copy-id-btn" style="margin-right: 10px; font-size: 0.8rem;">
+                    ID: <span id="user-id-display">...</span>
+                </a>
+                <a href="#" class="btn btn-signin" id="logout-btn">Log Out</a>
             </div>
         </div>
     </header>
 
     <main class="container">
-        
         <section class="asset-card">
             <span class="balance-label">Current Account Balance</span>
-            <h2 class="total-balance">$1,650.00</h2>
+            <h2 class="total-balance" id="acc-balance">$0.00</h2>
             
             <div class="asset-details">
                 <div class="asset-info">
-                    <h4>Selected Package</h4>
-                    <p>$500.00</p>
+                    <h4>Active Package</h4>
+                    <p id="acc-active-pkg">None</p>
                 </div>
                 <div class="asset-info">
                     <h4>Daily Earnings</h4>
-                    <p>+$15.00</p>
+                    <p id="acc-earnings">+$0.00</p>
                 </div>
                 <div class="asset-info">
-                    <h4>Total Profit</h4>
-                    <p>$1,150.00</p>
+                    <h4>Registration</h4>
+                    <p id="acc-date">...</p>
                 </div>
             </div>
         </section>
 
         <div class="account-actions">
-            <a href="#deposit" class="action-btn">
-                <i class="fas fa-wallet"></i>
-                Deposit
-            </a>
-            <a href="#withdraw" class="action-btn">
-                <i class="fas fa-money-bill-transfer"></i>
-                Withdraw
-            </a>
-            <a href="#transactions" class="action-btn">
-                <i class="fas fa-list-ul"></i>
-                History
-            </a>
+            <a href="./deposit.html" class="action-btn"><i class="fas fa-wallet"></i> Deposit</a>
+            <a href="./withdraw.html" class="action-btn"><i class="fas fa-circle-arrow-up"></i> Withdraw</a>
+            <a href="./transaction.html" class="action-btn"><i class="fas fa-list-ul"></i> History</a>
         </div>
 
         <div class="account-grid">
-            
             <div class="profile-card">
                 <h3 class="card-title"><i class="fas fa-user-circle"></i> Personal Profile</h3>
-                
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                     <div class="info-group">
-                        <label>Account ID</label>
-                        <p>#BI-99204</p>
-                    </div>
-                    <div class="info-group">
                         <label>Full Name</label>
-                        <p>John Doe</p>
+                        <p id="prof-name">Loading...</p>
                     </div>
                     <div class="info-group">
                         <label>Email Address</label>
-                        <p>johndoe@example.com</p>
+                        <p id="prof-email">Loading...</p>
+                    </div>
+                    <div class="info-group">
+                        <label>Phone Number</label>
+                        <p id="prof-phone">Loading...</p>
                     </div>
                     <div class="info-group">
                         <label>Country</label>
-                        <p>United States</p>
-                    </div>
-                    <div class="info-group">
-                        <label>Active Package</label>
-                        <p><span style="color: var(--accent-color);">Premium Plan</span></p>
-                    </div>
-                    <div class="info-group">
-                        <label>Join Date</label>
-                        <p>Jan 12, 2025</p>
+                        <p id="prof-country">Loading...</p>
                     </div>
                 </div>
-                <button class="btn-submit-kyc" style="background: transparent; border: 1px solid #ccc; color: #555; margin-top: 20px;">Edit Profile Details</button>
             </div>
 
             <div class="kyc-card">
                 <h3 class="card-title">
-                    <i class="fas fa-shield-check"></i> 
-                    KYC Verification 
-                    <span class="status-badge">Pending</span>
+                    <i class="fas fa-shield-check"></i> KYC Status: 
+                    <span class="status-badge" id="prof-kyc">Pending</span>
                 </h3>
-                <p style="font-size: 0.85rem; color: #666; margin-bottom: 20px;">Upload your documents to unlock higher withdrawal limits.</p>
-
-                <form>
+                <form id="kyc-form">
                     <div class="kyc-upload-box">
-                        <i class="fas fa-id-card"></i><br>
-                        <label for="passport-upload">Upload Passport Photo</label>
+                        <label for="passport-upload">Upload Documents</label>
                         <input type="file" id="passport-upload">
                     </div>
-
-                    <div class="kyc-upload-box">
-                        <i class="fas fa-address-card"></i><br>
-                        <label for="id-upload">Upload National ID (Front)</label>
-                        <input type="file" id="id-upload">
-                    </div>
-
                     <button type="submit" class="btn-submit-kyc">Submit Verification</button>
                 </form>
             </div>
-
         </div>
     </main>
 
-    <footer class="main-footer" style="margin-top: 50px;">
-        <div class="container">
-            <p style="text-align: center; opacity: 0.7;">&copy; 2025 BoostInvest. Secure Asset Management.</p>
-        </div>
-    </footer>
+    <script type="module">
+        import { supabase } from './js/supabases.js';
+
+        document.addEventListener("DOMContentLoaded", async function() {
+            
+            // 1. Hubi Login
+            const { data: { user }, error: authError } = await supabase.auth.getUser();
+            if (authError || !user) {
+                window.location.href = '../sub-pages/signin.html';
+                return;
+            }
+
+            // 2. Soo saar Xogta Profile-ka
+            async function fetchUserData() {
+                // Profiles Table
+                const { data: profile } = await supabase
+                    .from('profiles')
+                    .select('*')
+                    .eq('id', user.id)
+                    .single();
+
+                if (profile) {
+                    document.getElementById('user-id-display').textContent = profile.referral_code || "N/A";
+                    document.getElementById('prof-name').textContent = profile.full_name || "N/A";
+                    document.getElementById('prof-email').textContent = profile.email || user.email;
+                    document.getElementById('prof-phone').textContent = profile.phone || "Not Set";
+                    document.getElementById('prof-country').textContent = profile.country || "Not Set";
+                    document.getElementById('prof-kyc').textContent = profile.kyc_status;
+                    document.getElementById('acc-date').textContent = new Date(profile.registration_date).toLocaleDateString();
+                    
+                    setupCopy(profile.referral_code);
+                }
+
+                // Accounts Table
+                const { data: account } = await supabase
+                    .from('accounts')
+                    .select('*')
+                    .eq('id', user.id)
+                    .single();
+
+                if (account) {
+                    document.getElementById('acc-balance').textContent = `$${account.account_balance.toLocaleString()}`;
+                    document.getElementById('acc-earnings').textContent = `+$${account.earnings.toLocaleString()}`;
+                    document.getElementById('acc-active-pkg').textContent = account.active_package || "None";
+                }
+            }
+
+            fetchUserData();
+
+            // 3. Copy ID Function
+            function setupCopy(code) {
+                const btn = document.getElementById('copy-id-btn');
+                btn.onclick = (e) => {
+                    e.preventDefault();
+                    navigator.clipboard.writeText(code);
+                    const old = btn.innerHTML;
+                    btn.innerHTML = "Copied! ✅";
+                    setTimeout(() => btn.innerHTML = old, 2000);
+                };
+            }
+
+            // 4. Log Out with Spinner
+            const logoutBtn = document.getElementById('logout-btn');
+            logoutBtn.addEventListener('click', async (e) => {
+                e.preventDefault();
+                if (confirm("Ma hubtaa inaad baxayso?")) {
+                    logoutBtn.classList.add('loading');
+                    logoutBtn.innerHTML = `<span class="spinner"></span> Safar nabad ah...`;
+                    
+                    const { error } = await supabase.auth.signOut();
+                    if (!error) {
+                        localStorage.clear();
+                        window.location.href = '../sub-pages/signin.html';
+                    } else {
+                        alert("Error: " + error.message);
+                        logoutBtn.classList.remove('loading');
+                        logoutBtn.innerHTML = "Log Out";
+                    }
+                }
+            });
+
+            // 5. Auto Logout (10 Mins)
+            let time = 0;
+            const reset = () => time = 0;
+            ['mousemove', 'keypress', 'click'].forEach(ev => document.addEventListener(ev, reset));
+            
+            setInterval(() => {
+                time++;
+                if (time >= 10) { // 10 minutes
+                    supabase.auth.signOut().then(() => {
+                        alert("Session-kaagu wuu dhacay!");
+                        window.location.href = '../sub-pages/signin.html';
+                    });
+                }
+            }, 60000);
+        });
+    </script>
 
     <nav class="mobile-bottom-nav">
         <div class="nav-item"><a href="../user-dashbourd.html"><i class="fas fa-home"></i><span>Home</span></a></div>
@@ -260,6 +221,5 @@
         <div class="nav-item"><a href="./teams.html"><i class="fas fa-user-friends"></i><span>Teams</span></a></div>
         <div class="nav-item"><a href="./account.html" class="active"><i class="fas fa-user-circle"></i><span>Account</span></a></div>
     </nav>
-
 </body>
 </html>
