@@ -182,6 +182,28 @@
             padding: 5px;
         }
     }
+
+    /* Spinner Style */
+.spinner {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
+    border-top-color: #fff;
+    animation: spin 0.8s linear infinite;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.btn-signin.loading {
+    opacity: 0.7;
+    pointer-events: none; /* Jooji in mar labaad la riixo inta uu shaqaynayo */
+}
     </style>
 </head>
 <body>
@@ -407,80 +429,94 @@
             </a>
         </div>
     </nav>
-
-   <script type="module">
+<script type="module">
 import { supabase } from '../pages/db/supabase.js';
 
 document.addEventListener("DOMContentLoaded", async function() {
     
-    // 1. Hubi inuu qofku Login yahay
+    // --- 1. HUBINTA LOGIN-KA ---
     const { data: { user }, error: authError } = await supabase.auth.getUser();
-
     if (authError || !user) {
         window.location.href = '../sub-pages/signin.html';
         return;
     }
 
-    // 2. Soo qaad xogta Profile-ka (Full Name & Referral Code)
-    const { data: profile } = await supabase
-        .from('profiles')
-        .select('full_name, referral_code')
-        .eq('id', user.id)
-        .single();
+    // --- 2. SOO SAARISTA XOGTA (ID & ACCOUNT) ---
+    async function loadUserData() {
+        const { data: profile } = await supabase.from('profiles').select('referral_code').eq('id', user.id).single();
+        if (profile) {
+            document.getElementById('user-id-display').textContent = profile.referral_code || "N/A";
+            setupCopy(profile.referral_code);
+        }
 
-    if (profile) {
-        // Bandhigidda Referral Code-ka
-        const referralCode = profile.referral_code || "N/A";
-        document.getElementById('user-id-display').textContent = referralCode;
+        const { data: account } = await supabase.from('accounts').select('*').eq('id', user.id).single();
+        if (account) {
+            document.getElementById('balance-amount').textContent = `$${account.account_balance.toFixed(2)}`;
+            document.getElementById('earnings-amount').textContent = `$${account.earnings.toFixed(2)}`;
+            document.getElementById('active-package-name').textContent = account.active_package || 'None';
+        }
+    }
+    loadUserData();
 
-        // --- QAYBTA COPY-GA ---
+    // --- 3. COPY ID FUNCTION ---
+    function setupCopy(code) {
         const copyBtn = document.getElementById('copy-id-btn');
-        copyBtn.addEventListener('click', (e) => {
+        copyBtn.onclick = (e) => {
             e.preventDefault();
-            navigator.clipboard.writeText(referralCode).then(() => {
-                const originalText = copyBtn.innerHTML;
-                copyBtn.innerHTML = "Copied! ✅";
-                copyBtn.style.backgroundColor = "#28a745"; // Cagaar ka dhig markuu copy noqdo
-                
-                // Muddo 2 ilbiriqsi ka dib dib u celi sidii hore
-                setTimeout(() => {
-                    copyBtn.innerHTML = originalText;
-                    copyBtn.style.backgroundColor = ""; 
-                }, 2000);
-            });
-        });
+            navigator.clipboard.writeText(code);
+            const original = copyBtn.innerHTML;
+            copyBtn.innerHTML = "Copied! ✅";
+            setTimeout(() => copyBtn.innerHTML = original, 2000);
+        };
     }
 
-    // 3. Soo qaad xogta Account-ka (Balance & Earnings)
-    const { data: account } = await supabase
-        .from('accounts')
-        .select('*')
-        .eq('id', user.id)
-        .single();
-
-    if (account) {
-        document.getElementById('balance-amount').textContent = `$${account.account_balance.toFixed(2)}`;
-        document.getElementById('earnings-amount').textContent = `$${account.earnings.toFixed(2)}`;
-        document.getElementById('active-package-name').textContent = account.active_package || 'None';
-    }
-
-    // 4. Log Out Button (Shaqaynaya)
-    const logoutBtn = document.querySelector('.btn-signin'); 
+    // --- 4. LOG OUT OO WATA SPINNER ---
+    const logoutBtn = document.querySelector('.btn-signin');
     if (logoutBtn) {
         logoutBtn.addEventListener('click', async (e) => {
             e.preventDefault();
-            const confirmLogout = confirm("Ma hubtaa inaad rabto inaad baxdo?");
-            if (confirmLogout) {
-                const { error } = await supabase.signOut(); // Ama supabase.auth.signOut()
-                if (!error) {
-                    window.location.href = '../index.html'; 
-                } else {
-                    alert("Cilad: " + error.message);
-                }
+            if (confirm("Ma hubtaa inaad rabto inaad baxdo?")) {
+                handleLogout(logoutBtn);
             }
         });
     }
+
+    async function handleLogout(btn) {
+        const originalContent = btn.innerHTML;
+        btn.classList.add('loading');
+        btn.innerHTML = `<span class="spinner"></span> Baxaya...`;
+
+        const { error } = await supabase.auth.signOut();
+        if (!error) {
+            localStorage.clear();
+            sessionStorage.clear();
+            setTimeout(() => window.location.href = '../sub-pages/signin.html', 800);
+        } else {
+            alert("Cilad: " + error.message);
+            btn.classList.remove('loading');
+            btn.innerHTML = originalContent;
+        }
+    }
+
+    // --- 5. AUTO-LOGOUT (10 Minutes) ---
+    let idleTime = 0;
+    const idleLimit = 10; // 10 Daqiiqo
+
+    // Dib u bilaaw saacadda haddii qofku dhaqaaqo
+    const resetTimer = () => idleTime = 0;
+    ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'].forEach(evt => 
+        document.addEventListener(evt, resetTimer)
+    );
+
+    setInterval(() => {
+        idleTime++;
+        if (idleTime >= idleLimit) {
+            alert("Session-kaagii wuu dhacay (Inactivity). Fadlan dib u soco.");
+            handleLogout(logoutBtn);
+        }
+    }, 60000); // Hubi daqiiqad kasta
 });
 </script>
+
 </body>
 </html>
