@@ -266,12 +266,30 @@
 
       
 
-           <form id="kycForm">
-  <input type="file" id="selfie" accept="image/*" required />
-  <input type="file" id="idCard" accept="image/*" required />
-  <button type="submit">Submit KYC</button>
-</form>
+            <div class="kyc-card">
+    <h3 class="card-title">
+        <i class="fas fa-shield-check"></i> KYC Status: 
+        <span class="status-badge" id="prof-kyc">Loading..</span>
+    </h3>
+    
+    <form id="kyc-form">
 
+        <div class="kyc-upload-box" id="box-id">
+            <label for="id-card-upload"><i class="fas fa-id-card"></i> Upload National ID (Front)</label>
+            <input type="file" id="id-card-upload" accept="image/*" required>
+            <p class="file-name" style="font-size: 0.7rem; color: #64748b;"></p>
+        </div>
+
+        <button type="submit" class="btn-submit-kyc" id="submit-kyc-btn" style="width: 100%;">
+            Submit for Approval
+        </button>
+    </form>
+
+    <div id="kyc-completed-msg" style="display:none; text-align:center; padding:20px;">
+        <i class="fas fa-clock" style="font-size:2rem; color:#f59e0b;"></i>
+        <p style="margin-top:10px; font-weight:600;">Please wait while your KYC is being reviewed.</p>
+    </div>
+</div>
 
         </div>
     </main>
@@ -374,64 +392,52 @@
         });
 
 
-        document.addEventListener("DOMContentLoaded", async function() {
-    // ... xogta kale ee login-ka halkan ha joogto ...
-      const form = document.getElementById("kycForm");
+        
+        const kycForm = document.getElementById("kyc-form");
 
-form.addEventListener("submit", async (e) => {
+kycForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const selfieFile = document.getElementById("selfie").files[0];
-  const idCardFile = document.getElementById("idCard").files[0];
+  const fullName = document.getElementById("kyc-fullname").value;
+  const selfie = document.getElementById("selfie-upload").files[0];
+  const idCard = document.getElementById("id-card-upload").files[0];
 
-  // 1. Hel user-ka login ah
-  const { data: { user }, error } = await supabase.auth.getUser();
-  if (error || !user) {
-    alert("User lama helin");
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return alert("Login required");
+
+  // 1️⃣ Upload Selfie
+  const selfiePath = `kyc/${user.id}/selfie.jpg`;
+  const { error: selfieErr } = await supabase.storage
+    .from("kyc")
+    .upload(selfiePath, selfie, { upsert: true });
+
+  // 2️⃣ Upload ID
+  const idPath = `kyc/${user.id}/id.jpg`;
+  const { error: idErr } = await supabase.storage
+    .from("kyc")
+    .upload(idPath, idCard, { upsert: true });
+
+  if (selfieErr || idErr) {
+    alert("Upload error");
     return;
   }
 
-  // 2. Samee paths sax ah
-  const selfiePath = `${user.id}/selfie-${Date.now()}.jpg`;
-  const idPath = `${user.id}/idcard-${Date.now()}.jpg`;
-
-  // 3. Upload SELFIE
-  const { error: selfieError } = await supabase.storage
-    .from("kyc-documents")
-    .upload(selfiePath, selfieFile);
-
-  if (selfieError) {
-    console.error(selfieError);
-    alert("Selfie upload failed");
-    return;
-  }
-
-  // 4. Upload ID CARD
-  const { error: idError } = await supabase.storage
-    .from("kyc-documents")
-    .upload(idPath, idCardFile);
-
-  if (idError) {
-    console.error(idError);
-    alert("ID Card upload failed");
-    return;
-  }
-
-  // 5. Save paths in database
-  await supabase.from("kyc_submissions").insert({
+  // 3️⃣ Insert KYC row
+  const { error } = await supabase.from("kyc_submissions").insert({
     profile_id: user.id,
+    full_name_legal: fullName,
+    id_type: "national_id",
     user_photo_url: selfiePath,
-    id_card_photo_url: idPath,
-    status: "pending"
+    id_card_photo_url: idPath
   });
 
-  // 6. Update profile status
-  await supabase
-    .from("profiles")
-    .update({ kyc_status: "Pending" })
-    .eq("id", user.id); 
-
-  alert("KYC sent successfully ✅");
+  if (error) {
+    alert(error.message);
+  } else {
+    alert("KYC submitted successfully");
+    kycForm.style.display = "none";
+    document.getElementById("kyc-completed-msg").style.display = "block";
+  }
 });
 
     </script>
