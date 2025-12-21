@@ -10,76 +10,27 @@
     
     <style>
         body { padding-bottom: 80px; background-color: #f4f7f6; font-family: 'Poppins', sans-serif; }
-
         .deposit-container {
-            max-width: 600px;
-            margin: 40px auto;
-            background: #fff;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            max-width: 600px; margin: 40px auto; background: #fff; padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05);
         }
-
         .step-indicator { display: flex; justify-content: space-between; margin-bottom: 30px; }
         .step { font-size: 0.75rem; font-weight: 700; color: #ccc; text-transform: uppercase; }
         .step.active { color: #1a2a6c; border-bottom: 2px solid #1a2a6c; }
-
-        .payment-info-box {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 12px;
-            border-left: 5px solid #1a2a6c;
-            margin-bottom: 25px;
-        }
-
-        .address-box {
-            background: #fff;
-            border: 1px solid #ddd;
-            padding: 12px;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 10px;
-        }
-
+        .payment-info-box { background: #f8f9fa; padding: 20px; border-radius: 12px; border-left: 5px solid #1a2a6c; margin-bottom: 25px; }
+        .address-box { background: #fff; border: 1px solid #ddd; padding: 12px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
         .input-group { margin-bottom: 20px; }
         .input-group label { display: block; font-size: 0.9rem; font-weight: 600; margin-bottom: 8px; color: #333; }
-        .input-group input, .input-group select { 
-            width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; outline: none;
-        }
-
+        .input-group select, .input-group input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; outline: none; }
         #status-display { text-align: center; padding: 40px 20px; display: none; }
-
-        .status-success-box {
-            text-align: center; padding: 40px 20px; background: #f0fdf4; border-radius: 20px; border: 1px solid #bbf7d0;
-        }
-        .success-icon { font-size: 4rem; color: #22c55e; margin-bottom: 20px; animation: scaleIn 0.5s ease-out; }
-        @keyframes scaleIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
-        
-        .bonus-badge {
-            background: #1a2a6c; color: #fff; padding: 12px; border-radius: 8px; font-size: 0.85rem;
-            margin-top: 15px; display: flex; align-items: center; gap: 10px;
-        }
+        .status-success-box { text-align: center; padding: 40px 20px; background: #f0fdf4; border-radius: 20px; border: 1px solid #bbf7d0; }
+        .success-icon { font-size: 4rem; color: #22c55e; margin-bottom: 20px; }
+        .bonus-badge { background: #1a2a6c; color: #fff; padding: 12px; border-radius: 8px; font-size: 0.85rem; margin-top: 15px; display: flex; align-items: center; gap: 10px; }
     </style>
 </head>
 <body>
 
-    <header class="main-header">
-        <div class="container header-content">
-            <div class="logo-name">
-                <img src="../logo.png" alt="main-logo" width="35px">
-                <h1 class="logo">BoostInvest</h1>
-            </div>
-            <div class="auth-buttons">
-                <a href="#" id="logoutBtn" class="btn btn-signin">Log Out</a>
-            </div>
-        </div>
-    </header>
-
     <main class="container">
         <div class="deposit-container">
-            
             <div id="deposit-form-view">
                 <div class="step-indicator">
                     <span class="step">1. Select Package</span>
@@ -88,18 +39,11 @@
                 </div>
 
                 <h2 style="margin-bottom: 10px;">Deposit USDT</h2>
-                <p style="color: #666; font-size: 0.9rem; margin-bottom: 25px;">Please send the exact amount to the address below.</p>
-
                 <div class="payment-info-box">
-                    <label style="font-size: 0.75rem; text-transform: uppercase; color: #888;">Accepted Currency</label>
-                    <p><strong>USDT (TRC20 Network)</strong></p>
-                    
-                    <label style="font-size: 0.75rem; text-transform: uppercase; color: #888; display: block; margin-top: 15px;">Official Wallet Address</label>
+                    <label style="font-size: 0.75rem; color: #888;">USDT (TRC20) Wallet Address</label>
                     <div class="address-box">
                         <code id="walletAddr">TB5NK46FSHFNEpou5CXtAHxdayGW6r7wCM</code>
-                        <button onclick="copyAddr()" style="background: none; border: none; color: #1a2a6c; cursor: pointer;" id="copyBtn">
-                            <i class="fas fa-copy"></i>
-                        </button>
+                        <button onclick="copyAddr()" id="copyBtn"><i class="fas fa-copy"></i></button>
                     </div>
                 </div>
 
@@ -107,63 +51,76 @@
                     <div class="input-group">
                         <label>Select Package <span style="color: red;">*</span></label>
                         <select id="packageSelect" required>
-                            <option value="" disabled selected>Select your investment package</option>
-                            <option value="package1">$100 (2% Daily)</option>
-                            <option value="package2">$500 (2.5% Daily)</option>
-                            <option value="package3">$1000 (3% Daily)</option>
-                            <option value="package4">$3000+ (4% Daily)</option>
+                            <option value="" disabled selected>Loading packages...</option>
                         </select>
                     </div>
 
                     <div class="input-group">
-                        <label>Withdrawal Hash (TXID) <span style="color: red;">*</span></label>
-                        <input type="text" id="txid" placeholder="Paste your transaction hash here" required>
+                        <label>Transaction Hash (TXID) <span style="color: red;">*</span></label>
+                        <input type="text" id="txid" placeholder="Paste your TXID here" required>
                     </div>
 
-                    <div class="bonus-badge">
-                        <i class="fas fa-gift"></i>
-                        <span>You will receive a <strong>4% Welcome Bonus</strong> automatically upon confirmation!</span>
-                    </div>
-
-                    <button type="submit" id="submitBtn" class="btn btn-primary" style="width: 100%; padding: 15px; margin-top: 25px; font-size: 1rem; background: #1a2a6c; color: #fff; border: none; border-radius: 8px; cursor: pointer;">COMPLETED</button>
+                    <button type="submit" id="submitBtn" style="width: 100%; padding: 15px; background: #1a2a6c; color: #fff; border: none; border-radius: 8px; cursor: pointer;">COMPLETED</button>
                 </form>
             </div>
-
             <div id="status-display"></div>
         </div>
     </main>
 
     <script type="module">
-        import { supabase } from '../pages/db/supabase.js';
+        import { supabase } from '/BOOSTINVEST-PROJ/pages/db/supabase.js';
 
-        window.copyAddr = function() {
-            const addr = document.getElementById("walletAddr").innerText;
-            navigator.clipboard.writeText(addr);
-            const btn = document.getElementById("copyBtn");
-            btn.innerHTML = '<i class="fas fa-check" style="color: #22c55e;"></i>';
-            setTimeout(() => { btn.innerHTML = '<i class="fas fa-copy"></i>'; }, 2000);
+        // 1. Markii bogga la furo, soo qaado Packages-ka database-ka
+        async function fetchPackages() {
+            const selectElement = document.getElementById('packageSelect');
+            
+            try {
+                // Ka soo qaad database-ka table-ka 'investment_packages'
+                const { data: packages, error } = await supabase
+                    .from('investment_packages')
+                    .select('*')
+                    .order('amount', { ascending: true });
+
+                if (error) throw error;
+
+                // Tirtir "Loading..."
+                selectElement.innerHTML = '<option value="" disabled selected>Choose a package</option>';
+
+                // Mid mid ugu shub dropdown-ka
+                packages.forEach(pkg => {
+                    const option = document.createElement('option');
+                    option.value = pkg.id; // Wuxuu u dirayaa ID-ga package-ka
+                    option.setAttribute('data-amount', pkg.amount); // Kaydi cadadka lacagta
+                    option.textContent = `$${pkg.amount} (${pkg.daily_return}% Daily)`;
+                    selectElement.appendChild(option);
+                });
+
+            } catch (err) {
+                console.error("Cilad xogta: ", err.message);
+                selectElement.innerHTML = '<option disabled>Error loading packages</option>';
+            }
         }
 
+        fetchPackages();
+
+        // 2. Dirista Foomka Deposit-ka
         document.getElementById('depositForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
             const submitBtn = document.getElementById('submitBtn');
             submitBtn.disabled = true;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            submitBtn.innerHTML = 'Processing...';
 
             const { data: { user } } = await supabase.auth.getUser();
-            const packageSelected = document.getElementById('packageSelect').value;
+            const packageId = document.getElementById('packageSelect').value;
+            const selectedOption = document.getElementById('packageSelect').selectedOptions[0];
+            const amount = selectedOption.getAttribute('data-amount');
             const txid = document.getElementById("txid").value;
 
-            const amounts = { 'package1': 100, 'package2': 500, 'package3': 1000, 'package4': 3000 };
-            const amount = amounts[packageSelected];
-
-            // Insert into Supabase (Status: Pending)
             const { error } = await supabase.from('deposits').insert([
                 { 
                     user_id: user.id, 
-                    amount: amount, 
-                    package_selected: packageSelected, 
+                    amount: parseFloat(amount), 
+                    package_selected: packageId, 
                     txid: txid,
                     status: 'Pending' 
                 }
@@ -172,27 +129,25 @@
             if (error) {
                 alert("Error: " + error.message);
                 submitBtn.disabled = false;
-                submitBtn.innerText = 'COMPLETED';
                 return;
             }
 
             document.getElementById("deposit-form-view").style.display = "none";
-            const statusDisplay = document.getElementById("status-display");
-            statusDisplay.style.display = "block";
-            
-            statusDisplay.innerHTML = `
+            document.getElementById("status-display").style.display = "block";
+            document.getElementById("status-display").innerHTML = `
                 <div class="status-success-box">
-                    <div class="success-icon"><i class="fas fa-check-circle"></i></div>
-                    <h2 class="status-title">Completed Successfully!</h2>
-                    <p class="status-text">Your deposit request has been submitted. <br> 
-                    <strong>Please wait for admin confirmation.</strong> <br> 
-                    Your account balance will update after verification.</p>
-                    <hr style="margin: 20px 0; opacity: 0.1;">
-                    <p style="font-size: 0.8rem; color: #64748b;">TXID: ${txid}</p>
-                    <a href="dashboard.html" class="btn btn-primary" style="margin-top: 20px; display: inline-block; padding: 10px 25px; background: #1a2a6c; color: #fff; text-decoration: none; border-radius: 5px;">Back to Dashboard</a>
-                </div>
-            `;
+                    <i class="fas fa-check-circle success-icon"></i>
+                    <h2>Successfully Submitted!</h2>
+                    <p>Wait for admin to verify TXID: <b>${txid}</b></p>
+                    <a href="dashboard.html" class="btn btn-primary" style="text-decoration:none; color:blue;">Back Home</a>
+                </div>`;
         });
+
+        window.copyAddr = function() {
+            const addr = document.getElementById("walletAddr").innerText;
+            navigator.clipboard.writeText(addr);
+            alert("Copied!");
+        }
     </script>
 </body>
 </html>
