@@ -402,51 +402,97 @@
             }, 60000);
         });
 
-        const kycForm = document.getElementById("kyc-form");
 
+        document.addEventListener("DOMContentLoaded", async function() {
+    // ... xogta kale ee login-ka halkan ha joogto ...
+
+    async function checkKYCStatus() {
+        const { data: { user } } = await supabase.auth.getUser();
+        
+        // Soo qaado xogta profile-ka si aad u aragto status-ka hadda
+        const { data: profile } = await supabase
+            .from('profiles')
+            .select('kyc_status')
+            .eq('id', user.id)
+            .single();
+
+        const statusBadge = document.getElementById('prof-kyc');
+        const kycForm = document.getElementById('kyc-form');
+        const pendingMsg = document.getElementById('kyc-completed-msg');
+
+        // Haddii aanu userku waxba soo gudbin (Default: Not Verified)
+        if (!profile || profile.kyc_status === 'Not Verified' || profile.kyc_status === null) {
+            statusBadge.textContent = "Not Verified";
+            statusBadge.style.background = "#fee2e2"; // Red background
+            statusBadge.style.color = "#991b1b";
+            kycForm.style.display = "block";
+            pendingMsg.style.display = "none";
+        } 
+        // Haddii uu gudbiyay oo ay sugid ku jirto
+        else if (profile.kyc_status === 'pending') {
+            statusBadge.textContent = "Pending";
+            statusBadge.style.background = "#fef3c7"; // Yellow background
+            kycForm.style.display = "none";
+            pendingMsg.style.display = "block";
+        }
+        // Haddii la xaqiijiyay
+        else if (profile.kyc_status === 'verified') {
+            statusBadge.textContent = "Verified";
+            statusBadge.style.background = "#d1fae5"; // Green background
+            statusBadge.style.color = "#065f46";
+            kycForm.style.display = "none";
+            pendingMsg.innerHTML = `<i class="fas fa-check-circle" style="color:green; font-size:2rem;"></i><p>Akoonkaagu waa xaqiijisanyahay.</p>`;
+            pendingMsg.style.display = "block";
+        }
+    }
+
+    checkKYCStatus();
+});
+
+// Qaybta Form Submission-ka
 kycForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
+    e.preventDefault();
+    const btn = document.getElementById("submit-kyc-btn");
+    btn.disabled = true;
+    btn.innerHTML = "Sending...";
 
-  const fullName = document.getElementById("kyc-fullname").value;
-  const selfie = document.getElementById("selfie-upload").files[0];
-  const idCard = document.getElementById("id-card-upload").files[0];
+    const fullName = document.getElementById("kyc-fullname").value;
+    const selfie = document.getElementById("selfie-upload").files[0];
+    const idCard = document.getElementById("id-card-upload").files[0];
 
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return alert("Login required");
+    const { data: { user } } = await supabase.auth.getUser();
 
-  // 1️⃣ Upload Selfie
-  const selfiePath = `kyc/${user.id}/selfie.jpg`;
-  const { error: selfieErr } = await supabase.storage
-    .from("kyc")
-    .upload(selfiePath, selfie, { upsert: true });
+    try {
+        // 1. Upload Documents (Bucket: kyc)
+        const selfiePath = `kyc/${user.id}/selfie_${Date.now()}.jpg`;
+        const idPath = `kyc/${user.id}/id_${Date.now()}.jpg`;
 
-  // 2️⃣ Upload ID
-  const idPath = `kyc/${user.id}/id.jpg`;
-  const { error: idErr } = await supabase.storage
-    .from("kyc")
-    .upload(idPath, idCard, { upsert: true });
+        await supabase.storage.from("kyc").upload(selfiePath, selfie);
+        await supabase.storage.from("kyc").upload(idPath, idCard);
 
-  if (selfieErr || idErr) {
-    alert("Upload error");
-    return;
-  }
+        // 2. Insert to kyc_submissions
+        const { error: insertErr } = await supabase.from("kyc_submissions").insert({
+            profile_id: user.id,
+            full_name_legal: fullName,
+            id_type: "national_id",
+            user_photo_url: selfiePath,
+            id_card_photo_url: idPath,
+            status: "pending"
+        });
 
-  // 3️⃣ Insert KYC row
-  const { error } = await supabase.from("kyc_submissions").insert({
-    profile_id: user.id,
-    full_name_legal: fullName,
-    id_type: "national_id",
-    user_photo_url: selfiePath,
-    id_card_photo_url: idPath
-  });
+        if (insertErr) throw insertErr;
 
-  if (error) {
-    alert(error.message);
-  } else {
-    alert("KYC submitted successfully");
-    kycForm.style.display = "none";
-    document.getElementById("kyc-completed-msg").style.display = "block";
-  }
+        // 3. Update Profiles Table status-kiisa ka dhig 'pending'
+        await supabase.from("profiles").update({ kyc_status: "pending" }).eq("id", user.id);
+
+        alert("KYC submitted successfully!");
+        location.reload(); // Refresh si uu u arko "Pending"
+
+    } catch (err) {
+        alert("Error: " + err.message);
+        btn.disabled = false;
+        btn.innerHTML = "Submit for Approval";
+    }
 });
 
     </script>
