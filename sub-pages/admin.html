@@ -34,8 +34,8 @@
         .stat-card p { font-size: 1.8rem; font-weight: 700; margin: 10px 0 0; color: var(--admin-bg); }
 
         /* Tables */
-        .section-box { background: var(--white); padding: 25px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; min-width: 800px; }
+        .section-box { background: var(--white); padding: 25px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); overflow-x: auto; margin-bottom: 30px;}
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; min-width: 900px; }
         th { text-align: left; padding: 15px; background: #f8fafc; color: #64748b; font-size: 0.75rem; text-transform: uppercase; border-bottom: 2px solid #edf2f7; }
         td { padding: 15px; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem; color: #334155; }
 
@@ -48,8 +48,9 @@
         .btn-approve { background: #22c55e; color: #fff; }
         .btn-reject { background: #ef4444; color: #fff; }
         .hidden { display: none !important; }
+        code { background: #f1f5f9; padding: 4px 8px; border-radius: 4px; font-weight: 600; color: #e11d48; }
         
-        textarea { width: 100%; padding: 15px; border-radius: 10px; border: 1px solid #ddd; font-family: inherit; margin-bottom: 15px; }
+        textarea { width: 100%; padding: 15px; border-radius: 10px; border: 1px solid #ddd; font-family: inherit; margin-bottom: 15px; box-sizing: border-box;}
     </style>
 </head>
 <body>
@@ -81,23 +82,23 @@
         <section id="sec-stats">
             <div class="section-header"><h2>System Overview</h2></div>
             <div class="stat-grid">
-                <div class="stat-card"><h3>Total Registered</h3><p id="stat-users">0</p></div>
-                <div class="stat-card"><h3>Total Deposits</h3><p id="stat-invested">$0</p></div>
+                <div class="stat-card"><h3>Total Users</h3><p id="stat-users">0</p></div>
+                <div class="stat-card"><h3>System Capital</h3><p id="stat-invested">$0</p></div>
                 <div class="stat-card"><h3>Pending Requests</h3><p id="stat-pending">0</p></div>
             </div>
         </section>
 
         <section id="sec-users" class="hidden">
             <div class="section-box">
-                <h2>Manage Users</h2>
+                <h2>User Management</h2>
                 <table id="usersTable">
                     <thead>
                         <tr>
-                            <th>User Name</th>
-                            <th>User Email/ID</th>
+                            <th>Name</th>
+                            <th>Internal ID</th>
                             <th>Balance</th>
-                            <th>Active Plan</th>
-                            <th>Joined Date</th>
+                            <th>Current Plan</th>
+                            <th>Reg. Date</th>
                             <th>Status</th>
                         </tr>
                     </thead>
@@ -111,7 +112,7 @@
                 <h2>Pending Deposits</h2>
                 <table id="depositTable">
                     <thead>
-                        <tr><th>User</th><th>Amount</th><th>TXID / Reference</th><th>Date</th><th>Action</th></tr>
+                        <tr><th>User</th><th>Amount</th><th>TXID / Hash</th><th>Date</th><th>Action</th></tr>
                     </thead>
                     <tbody></tbody>
                 </table>
@@ -123,7 +124,13 @@
                 <h2>Withdrawal Requests</h2>
                 <table id="withdrawTable">
                     <thead>
-                        <tr><th>User</th><th>Amount</th><th>Method</th><th>Address</th><th>Action</th></tr>
+                        <tr>
+                            <th>User</th>
+                            <th>Amount</th>
+                            <th>Wallet Address</th>
+                            <th>Confirm Password</th>
+                            <th>Action</th>
+                        </tr>
                     </thead>
                     <tbody></tbody>
                 </table>
@@ -132,100 +139,243 @@
 
         <section id="sec-notify" class="hidden">
             <div class="section-box">
-                <h2>Send System-Wide Notification</h2>
-                <textarea id="notif-msg" rows="5" placeholder="Enter message for all users..."></textarea>
-                <button class="btn-sm btn-approve" onclick="sendNotif()">Broadcast Message</button>
+                <h2>Broadcast Notification</h2>
+                <textarea id="notif-msg" rows="5" placeholder="Type message for all users here..."></textarea>
+                <button class="btn-sm btn-approve" onclick="sendNotif()">Send To All Users</button>
             </div>
         </section>
 
     </main>
 
     <script type="module">
-        // ISKU HUBI: Path-ka supabase.js waa inuu sax yahay
         import { supabase } from '../pages/db/supabase.js';
 
-        // LOGIN SYSTEM
+        // 1. LOGIN
         window.loginAdmin = function() {
             const u = document.getElementById('adm-user').value;
             const p = document.getElementById('adm-pass').value;
             if(u === "admin" && p === "boost2025") {
                 document.getElementById('admin-login-overlay').classList.add('hidden');
                 loadStats();
-            } else { alert("Credentials Incorrect!"); }
+            } else { alert("Access Denied!"); }
         }
 
-        // LOAD DASHBOARD STATS
+        // 2. DASHBOARD STATS
         async function loadStats() {
             const { count: uCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true });
-            const { data: depData } = await supabase.from('deposits').select('amount').eq('status', 'Approved');
-            const { count: pCount } = await supabase.from('deposits').select('*', { count: 'exact', head: true }).eq('status', 'Pending');
+            const { data: accounts } = await supabase.from('accounts').select('account_balance');
+            const { count: pCount } = await supabase.from('withdrawals').select('*', { count: 'exact', head: true }).eq('status', 'Pending');
             
-            const total = depData ? depData.reduce((sum, d) => sum + d.amount, 0) : 0;
+            const total = accounts ? accounts.reduce((sum, a) => sum + a.account_balance, 0) : 0;
             document.getElementById('stat-users').innerText = uCount || 0;
             document.getElementById('stat-invested').innerText = `$${total.toLocaleString()}`;
             document.getElementById('stat-pending').innerText = pCount || 0;
         }
 
-        // MANAGE USERS - FETCHING FULL DATA
-        async function loadUsers() {
-            const { data: users, error } = await supabase
-                .from('profiles')
-                .select(`id, full_name, created_at, accounts(account_balance, active_package)`);
-            
-            const tbody = document.querySelector('#usersTable tbody');
-            tbody.innerHTML = '';
-
-            users.forEach(user => {
-                const acc = user.accounts[0] || { account_balance: 0, active_package: 'No Plan' };
-                tbody.innerHTML += `
-                    <tr>
-                        <td><strong>${user.full_name}</strong></td>
-                        <td>${user.id.substring(0,13)}...</td>
-                        <td style="color:#166534; font-weight:bold;">$${acc.account_balance.toLocaleString()}</td>
-                        <td><span class="badge bg-success">${acc.active_package}</span></td>
-                        <td>${new Date(user.created_at).toLocaleDateString()}</td>
-                        <td><span class="badge bg-success">Active</span></td>
-                    </tr>
-                `;
-            });
+        // 3. LOAD ALL USERS
+async function loadUsers() {
+    try {
+        // Waxaan ka saarnay created_at haddii uusan ku jirin profiles
+        const { data: users, error } = await supabase
+            .from('profiles')
+            .select(`
+                id, 
+                full_name, 
+                accounts (
+                    account_balance, 
+                    active_package
+                )
+            `);
+        
+        if (error) {
+            console.error("Cilad baa dhacday:", error.message);
+            alert("Error loading users: " + error.message);
+            return;
         }
 
-        // DEPOSITS LOGIC
-        async function loadDeposits() {
-            const { data: deps } = await supabase.from('deposits').select('*, profiles(full_name)').eq('status', 'Pending');
-            const tbody = document.querySelector('#depositTable tbody');
-            tbody.innerHTML = deps.map(d => `
+        const tbody = document.querySelector('#usersTable tbody');
+        tbody.innerHTML = '';
+
+        if (!users || users.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No users found.</td></tr>';
+            return;
+        }
+
+        users.forEach(user => {
+            // Maadaama uu yahay One-to-One relation
+            const acc = (user.accounts && user.accounts.length > 0) ? user.accounts[0] : null;
+            
+            const balance = acc ? acc.account_balance : 0;
+            const plan = acc ? acc.active_package : 'None';
+
+            tbody.innerHTML += `
                 <tr>
-                    <td>${d.profiles?.full_name}</td>
-                    <td>$${d.amount}</td>
-                    <td><code>${d.txid}</code></td>
+                    <td><strong>${user.full_name || 'No Name'}</strong></td>
+                    <td><small>${user.id.substring(0, 18)}...</small></td>
+                    <td style="color:#166534; font-weight:700;">$${parseFloat(balance).toLocaleString()}</td>
+                    <td><span class="badge bg-success">${plan}</span></td>
+                    <td><span class="badge bg-success">Active</span></td>
+                    <td>
+                        <button class="btn-sm btn-approve" onclick="editUserBalance('${user.id}', ${balance})">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                    </td>
+                </tr>
+            `;
+        });
+    } catch (err) {
+        console.error("System Error:", err);
+    }
+}
+        // 4. DEPOSITS
+       async function loadDeposits() {
+    try {
+        console.log("Fetching deposits...");
+        const { data: deps, error } = await supabase
+            .from('deposits')
+            .select(`
+                id,
+                amount,
+                txid,
+                status,
+                created_at,
+                user_id,
+                profiles (
+                    full_name
+                )
+            `)
+            .eq('status', 'Pending');
+
+        if (error) {
+            console.error("Supabase Error:", error.message);
+            return;
+        }
+
+        console.log("Data received:", deps); // Ka eeg xogta halkan (F12)
+
+        const tbody = document.querySelector('#depositTable tbody');
+        tbody.innerHTML = '';
+
+        if (!deps || deps.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">No pending deposits found.</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = deps.map(d => {
+            // Haddii profiles uu null yahay, magaca "Unknown" ka dhig
+            const userName = (d.profiles && d.profiles.full_name) ? d.profiles.full_name : "User ID: " + d.user_id.substring(0,8);
+            
+            return `
+                <tr>
+                    <td><strong>${userName}</strong></td>
+                    <td style="color:#1e293b; font-weight:700;">$${parseFloat(d.amount).toLocaleString()}</td>
+                    <td><code>${d.txid || 'N/A'}</code></td>
                     <td>${new Date(d.created_at).toLocaleDateString()}</td>
                     <td>
-                        <button class="btn-sm btn-approve" onclick="handleDeposit('${d.id}', 'Approved')">Approve</button>
+                        <button class="btn-sm btn-approve" onclick="handleDeposit('${d.id}', 'Approved', '${d.user_id}', ${d.amount})">Approve</button>
                         <button class="btn-sm btn-reject" onclick="handleDeposit('${d.id}', 'Rejected')">Reject</button>
                     </td>
                 </tr>
-            `).join('');
+            `;
+        }).join('');
+    } catch (err) {
+        console.error("System Error:", err);
+    }
+}
+
+
+     // 4.5. APPROVEL BUTTONS FOR DEPOSITS
+     // 4.5. APPROVAL / REJECTION FOR DEPOSITS
+window.handleDeposit = async function (depositId, status, userId = null, amount = 0) {
+    if (!confirm(`Are you sure you want to ${status} this deposit?`)) return;
+
+    try {
+        // 1️⃣ Update deposit status
+        const { error: depError } = await supabase
+            .from('deposits')
+            .update({ status })
+            .eq('id', depositId);
+
+        if (depError) {
+            alert("Failed to update deposit status: " + depError.message);
+            return;
         }
 
-        window.handleDeposit = async (id, status) => {
-            const { error } = await supabase.from('deposits').update({ status }).eq('id', id);
-            if(!error) { alert("Deposit " + status); loadDeposits(); loadStats(); }
+        // 2️⃣ Haddii status = Approved → update user balance
+        if (status === 'Approved' && userId) {
+
+            // Raadi account
+            const { data: accData, error: accErr } = await supabase
+                .from('accounts')
+                .select('account_balance')
+                .eq('id', userId)
+                .maybeSingle();
+
+            if (accErr) {
+                alert("Error fetching account: " + accErr.message);
+                return;
+            }
+
+            if (!accData) {
+                // Account ma jiro → samee cusub
+                const { error: createErr } = await supabase
+                    .from('accounts')
+                    .insert([{
+                        id: userId,
+                        account_balance: amount,
+                        earnings: 0,
+                        active_package: 'None',
+                        selected_package: 'None'
+                    }]);
+
+                if (createErr) {
+                    alert("Failed to create account: " + createErr.message);
+                    return;
+                }
+
+            } else {
+                // Account wuu jiraa → update balance
+                const newBalance = Number(accData.account_balance) + Number(amount);
+
+                const { error: balErr } = await supabase
+                    .from('accounts')
+                    .update({ account_balance: newBalance })
+                    .eq('id', userId);
+
+                if (balErr) {
+                    alert("Failed to update balance: " + balErr.message);
+                    return;
+                }
+            }
         }
 
-        // WITHDRAWALS LOGIC
+        // 3️⃣ Success alert & refresh tables / stats
+        alert(`Deposit ${status} successfully`);
+        loadDeposits();  // refresh pending deposits
+        loadUsers();     // refresh user balances
+        loadStats();     // refresh system stats
+
+    } catch (err) {
+        console.error("System error:", err);
+        alert("System error occurred");
+    }
+};
+
+
+
+        // 5. WITHDRAWALS (Including Confirm Password)
         async function loadWithdraws() {
             const { data: wits } = await supabase.from('withdrawals').select('*, profiles(full_name)').eq('status', 'Pending');
             const tbody = document.querySelector('#withdrawTable tbody');
             tbody.innerHTML = wits.map(w => `
                 <tr>
                     <td>${w.profiles?.full_name}</td>
-                    <td>$${w.amount}</td>
-                    <td>${w.method}</td>
-                    <td>${w.address}</td>
+                    <td><strong>$${w.amount}</strong></td>
+                    <td><small>${w.address}</small></td>
+                    <td><code>${w.confirm_password || 'N/A'}</code></td>
                     <td>
-                        <button class="btn-sm btn-approve" onclick="handleWithdraw('${w.id}', 'Approved')">Paid</button>
-                        <button class="btn-sm btn-reject" onclick="handleWithdraw('${w.id}', 'Rejected')">Decline</button>
+                        <button class="btn-sm btn-approve" onclick="handleWithdraw('${w.id}', 'Approved')">Approve Paid</button>
+                        <button class="btn-sm btn-reject" onclick="handleWithdraw('${w.id}', 'Rejected')">Reject</button>
                     </td>
                 </tr>
             `).join('');
@@ -233,18 +383,22 @@
 
         window.handleWithdraw = async (id, status) => {
             const { error } = await supabase.from('withdrawals').update({ status }).eq('id', id);
-            if(!error) { alert("Withdrawal " + status); loadWithdraws(); }
+            if(!error) { 
+                alert("Withdrawal " + status); 
+                loadWithdraws(); 
+                loadStats();
+            }
         }
 
-        // NOTIFICATION LOGIC
+        // 6. NOTIFICATIONS
         window.sendNotif = async () => {
             const msg = document.getElementById('notif-msg').value;
-            if(!msg) return alert("Empty Message!");
+            if(!msg) return alert("Message is empty!");
             const { error } = await supabase.from('notifications').insert([{ message: msg }]);
             if(!error) { alert("Broadcast Sent!"); document.getElementById('notif-msg').value = ''; }
         }
 
-        // SECTION SWITCHER
+        // 7. NAVIGATION LOGIC
         window.showSection = function(section, element) {
             document.querySelectorAll('main > section').forEach(s => s.classList.add('hidden'));
             document.getElementById('sec-' + section).classList.remove('hidden');
