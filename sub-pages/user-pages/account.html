@@ -266,41 +266,12 @@
 
       
 
-            <div class="kyc-card">
-    <h3 class="card-title">
-        <i class="fas fa-shield-check"></i> KYC Status: 
-        <span class="status-badge" id="prof-kyc">Pending</span>
-    </h3>
-    
-    <form id="kyc-form">
-        <div class="info-group">
-            <label>Full Legal Name</label>
-            <input type="text" id="kyc-fullname" placeholder="Sida ID-ga ugu qoran" required 
-                   style="width:100%; padding:8px; border-radius:8px; border:1px solid #ddd; margin-bottom:15px;">
-        </div>
+           <form id="kycForm">
+  <input type="file" id="selfie" accept="image/*" required />
+  <input type="file" id="idCard" accept="image/*" required />
+  <button type="submit">Submit KYC</button>
+</form>
 
-        <div class="kyc-upload-box" id="box-selfie">
-            <label for="selfie-upload"><i class="fas fa-camera"></i> Upload Selfie Photo</label>
-            <input type="file" id="selfie-upload" accept="image/*" required>
-            <p class="file-name" style="font-size: 0.7rem; color: #64748b;"></p>
-        </div>
-
-        <div class="kyc-upload-box" id="box-id">
-            <label for="id-card-upload"><i class="fas fa-id-card"></i> Upload National ID (Front)</label>
-            <input type="file" id="id-card-upload" accept="image/*" required>
-            <p class="file-name" style="font-size: 0.7rem; color: #64748b;"></p>
-        </div>
-
-        <button type="submit" class="btn-submit-kyc" id="submit-kyc-btn" style="width: 100%;">
-            Submit for Approval
-        </button>
-    </form>
-
-    <div id="kyc-completed-msg" style="display:none; text-align:center; padding:20px;">
-        <i class="fas fa-clock" style="font-size:2rem; color:#f59e0b;"></i>
-        <p style="margin-top:10px; font-weight:600;">Codsigaaga waa la soo diray. Fadlan sug inta admin-ku ka hubinayo.</p>
-    </div>
-</div>
 
         </div>
     </main>
@@ -405,94 +376,62 @@
 
         document.addEventListener("DOMContentLoaded", async function() {
     // ... xogta kale ee login-ka halkan ha joogto ...
+      const form = document.getElementById("kycForm");
 
-    async function checkKYCStatus() {
-        const { data: { user } } = await supabase.auth.getUser();
-        
-        // Soo qaado xogta profile-ka si aad u aragto status-ka hadda
-        const { data: profile } = await supabase
-            .from('profiles')
-            .select('kyc_status')
-            .eq('id', user.id)
-            .single();
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-        const statusBadge = document.getElementById('prof-kyc');
-        const kycForm = document.getElementById('kyc-form');
-        const pendingMsg = document.getElementById('kyc-completed-msg');
+  const selfieFile = document.getElementById("selfie").files[0];
+  const idCardFile = document.getElementById("idCard").files[0];
 
-        // Haddii aanu userku waxba soo gudbin (Default: Not Verified)
-        if (!profile || profile.kyc_status === 'Not Verified' || profile.kyc_status === null) {
-            statusBadge.textContent = "Not Verified";
-            statusBadge.style.background = "#fee2e2"; // Red background
-            statusBadge.style.color = "#991b1b";
-            kycForm.style.display = "block";
-            pendingMsg.style.display = "none";
-        } 
-        // Haddii uu gudbiyay oo ay sugid ku jirto
-        else if (profile.kyc_status === 'pending') {
-            statusBadge.textContent = "Pending";
-            statusBadge.style.background = "#fef3c7"; // Yellow background
-            kycForm.style.display = "none";
-            pendingMsg.style.display = "block";
-        }
-        // Haddii la xaqiijiyay
-        else if (profile.kyc_status === 'verified') {
-            statusBadge.textContent = "Verified";
-            statusBadge.style.background = "#d1fae5"; // Green background
-            statusBadge.style.color = "#065f46";
-            kycForm.style.display = "none";
-            pendingMsg.innerHTML = `<i class="fas fa-check-circle" style="color:green; font-size:2rem;"></i><p>Akoonkaagu waa xaqiijisanyahay.</p>`;
-            pendingMsg.style.display = "block";
-        }
-    }
+  // 1. Hel user-ka login ah
+  const { data: { user }, error } = await supabase.auth.getUser();
+  if (error || !user) {
+    alert("User lama helin");
+    return;
+  }
 
-    checkKYCStatus();
-});
+  // 2. Samee paths sax ah
+  const selfiePath = `${user.id}/selfie-${Date.now()}.jpg`;
+  const idPath = `${user.id}/idcard-${Date.now()}.jpg`;
 
-// Qaybta Form Submission-ka
-kycForm.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const btn = document.getElementById("submit-kyc-btn");
-    btn.disabled = true;
-    btn.innerHTML = "Sending...";
+  // 3. Upload SELFIE
+  const { error: selfieError } = await supabase.storage
+    .from("kyc-documents")
+    .upload(selfiePath, selfieFile);
 
-    const fullName = document.getElementById("kyc-fullname").value;
-    const selfie = document.getElementById("selfie-upload").files[0];
-    const idCard = document.getElementById("id-card-upload").files[0];
+  if (selfieError) {
+    console.error(selfieError);
+    alert("Selfie upload failed");
+    return;
+  }
 
-    const { data: { user } } = await supabase.auth.getUser();
+  // 4. Upload ID CARD
+  const { error: idError } = await supabase.storage
+    .from("kyc-documents")
+    .upload(idPath, idCardFile);
 
-    try {
-        // 1. Upload Documents (Bucket: kyc)
-        const selfiePath = `kyc/${user.id}/selfie_${Date.now()}.jpg`;
-        const idPath = `kyc/${user.id}/id_${Date.now()}.jpg`;
+  if (idError) {
+    console.error(idError);
+    alert("ID Card upload failed");
+    return;
+  }
 
-        await supabase.storage.from("kyc").upload(selfiePath, selfie);
-        await supabase.storage.from("kyc").upload(idPath, idCard);
+  // 5. Save paths in database
+  await supabase.from("kyc_submissions").insert({
+    profile_id: user.id,
+    user_photo_url: selfiePath,
+    id_card_photo_url: idPath,
+    status: "pending"
+  });
 
-        // 2. Insert to kyc_submissions
-        const { error: insertErr } = await supabase.from("kyc_submissions").insert({
-            profile_id: user.id,
-            full_name_legal: fullName,
-            id_type: "national_id",
-            user_photo_url: selfiePath,
-            id_card_photo_url: idPath,
-            status: "pending"
-        });
+  // 6. Update profile status
+  await supabase
+    .from("profiles")
+    .update({ kyc_status: "Pending" })
+    .eq("id", user.id); 
 
-        if (insertErr) throw insertErr;
-
-        // 3. Update Profiles Table status-kiisa ka dhig 'pending'
-        await supabase.from("profiles").update({ kyc_status: "pending" }).eq("id", user.id);
-
-        alert("KYC submitted successfully!");
-        location.reload(); // Refresh si uu u arko "Pending"
-
-    } catch (err) {
-        alert("Error: " + err.message);
-        btn.disabled = false;
-        btn.innerHTML = "Submit for Approval";
-    }
+  alert("KYC sent successfully ✅");
 });
 
     </script>
