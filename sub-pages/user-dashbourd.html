@@ -131,6 +131,52 @@
         .text-danger {
             color: #dc3545; /* Red */
         }
+
+        /* 📱 Account Summary Responsive Design */
+.account-summary {
+    padding: 20px 0;
+    background: #f8f9fa;
+}
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Saddex qaybood oo siman desktop-ka */
+    gap: 15px;
+}
+
+.summary-card {
+    background: #fff;
+    padding: 20px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border-top: 4px solid var(--accent-color);
+    transition: transform 0.3s ease;
+}
+
+.summary-card:hover { transform: translateY(-5px); }
+.summary-card p { font-size: 0.85rem; color: #666; margin-bottom: 8px; font-weight: 500; }
+.summary-card h2 { font-size: 1.4rem; color: #1a2a6c; font-weight: 700; }
+
+/* 📲 Mobile Adjustments (Halkan ayaa muhiim ah) */
+@media (max-width: 768px) {
+    .summary-grid {
+        grid-template-columns: 1fr; /* Hal saf kiliya mobile-ka */
+        gap: 12px;
+        padding: 0 10px;
+    }
+    
+    .summary-card {
+        padding: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        text-align: left;
+    }
+
+    .summary-card p { margin-bottom: 0; }
+    .summary-card h2 { font-size: 1.2rem; }
+}
         
         /* Mobile adjustments */
         @media (max-width: 600px) {
@@ -283,19 +329,22 @@
                 </div>
             </div>
         </section>
-        <section class="account-summary" style="padding: 20px 0; background: #f4f4f4;">
-    <div class="container" style="display: flex; gap: 20px; flex-wrap: wrap;">
-        <div class="crypto-card" style="flex: 1; min-width: 200px;">
-            <p>Account Balance</p>
-            <h2 id="balance-amount">$0.00</h2>
+  
+          <section class="account-summary">
+    <div class="container summary-grid">
+        <div class="summary-card">
+            <p><i class="fas fa-wallet" style="margin-right: 5px; color: #1a2a6c;"></i> Balance</p>
+            <h2 id="balance-amount">...</h2> 
         </div>
-        <div class="crypto-card" style="flex: 1; min-width: 200px; border-left-color: #28a745;">
-            <p>Total Earnings</p>
-            <h2 id="earnings-amount">$0.00</h2>
+        
+        <div class="summary-card" style="border-top-color: #28a745;">
+            <p><i class="fas fa-chart-line" style="margin-right: 5px; color: #28a745;"></i> Total Profit</p>
+            <h2 id="earnings-amount">...</h2>
         </div>
-        <div class="crypto-card" style="flex: 1; min-width: 200px; border-left-color: #ffc107;">
-            <p>Active Package</p>
-            <h2 id="active-package-name">None</h2>
+        
+        <div class="summary-card" style="border-top-color: #ffc107;">
+            <p><i class="fas fa-box-open" style="margin-right: 5px; color: #ffc107;"></i> Plan</p>
+            <h2 id="active-package-name">...</h2>
         </div>
     </div>
 </section>
@@ -455,21 +504,38 @@ document.addEventListener("DOMContentLoaded", async function() {
     }
 
     // --- 2. SOO SAARISTA XOGTA (ID & ACCOUNT) ---
-    async function loadUserData() {
-        const { data: profile } = await supabase.from('profiles').select('referral_code').eq('id', user.id).single();
-        if (profile) {
-            document.getElementById('user-id-display').textContent = profile.referral_code || "N/A";
-            setupCopy(profile.referral_code);
+async function loadUserData() {
+    // 1. Hel User-ka hadda login-ka ah
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (user) {
+        // 2. Kasoo qaad xogta Table-ka 'accounts'
+        const { data: account, error } = await supabase
+            .from('accounts')
+            .select('account_balance, earnings, active_package')
+            .eq('id', user.id)
+            .single();
+
+        if (error) {
+            console.error("Database Error:", error.message);
+            // Haddii cilad dhacdo, tusi $0.00
+            document.getElementById('balance-amount').textContent = "$0.00";
+            document.getElementById('earnings-amount').textContent = "$0.00";
+            document.getElementById('active-package-name').textContent = "None";
+            return;
         }
 
-        const { data: account } = await supabase.from('accounts').select('*').eq('id', user.id).single();
         if (account) {
-            document.getElementById('balance-amount').textContent = `$${account.account_balance.toFixed(2)}`;
-            document.getElementById('earnings-amount').textContent = `$${account.earnings.toFixed(2)}`;
-            document.getElementById('active-package-name').textContent = account.active_package || 'None';
+            // Halkan ayay xogtu si toos ah HTML-ka ugu dhex dhacaysaa
+            document.getElementById('balance-amount').textContent = `$${account.account_balance.toLocaleString()}`;
+            document.getElementById('earnings-amount').textContent = `$${account.earnings.toLocaleString()}`;
+            document.getElementById('active-package-name').textContent = account.active_package || 'No Plan';
         }
     }
-    loadUserData();
+}
+
+// U wac function-ka
+loadUserData();
 
     // --- 3. COPY ID FUNCTION ---
     function setupCopy(code) {
