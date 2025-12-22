@@ -58,7 +58,7 @@ try {
 
         if (profileError) throw profileError;
 
-        showMessage(`Guul! Account-kaaga iyo Balance-kaagaba waa diyaar.`, "success");
+        showMessage(`You created an account successfully!`, "success");
         signupForm.reset();
     }
 
