@@ -3,7 +3,7 @@
     /* Primary color (Blue/Teal for trust and stability) */
     --primary-color: #393939; /* Madax-xigeen blue for primary calls to action */
     --secondary-color: #4b4b4b; /* Darker blue for hover/active */
-    --accent-color: #00d12a; /* Green for success/growth (e.g., Invest Now buttons) */
+    --accent-color: rgb(40, 157, 253); /* Green for success/growth (e.g., Invest Now buttons) */
     --text-color: #333;
     --light-text-color: #f8f9fa;
     --bg-light: #939393;
