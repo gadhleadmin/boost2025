@@ -1,7 +1,11 @@
+// supabase.js
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-const supabaseUrl = 'https://vjdaylpouhhehtcjvukr.supabase.co'; 
-const supabasePublishableKey = 'sb_publishable_Tzxf3UM0HtAQucr58is5eQ_yVzcjtEm'; // Tusaale: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+// URL sax ah ee mashruucaaga Supabase
+const supabaseUrl = 'https://buzfscezwtuwwctckazm.supabase.co';
+
+// Publishable (anon) API Key sax ah
+const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ1emZzY2V6d3R1d3djdGNrYXptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjYzNzY4ODksImV4cCI6MjA4MTk1Mjg4OX0.rIsOjDlwa_5B1jxeHEgnzZfmUaDGAra7jdgPJIlcbJo';
 
 // Bilaabidda (Initialization) macaamiisha Supabase
-export const supabase = createClient(supabaseUrl, supabasePublishableKey);
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
