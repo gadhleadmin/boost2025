@@ -1,40 +1,49 @@
-
 import { supabase } from './supabase.js';
 
-async function signUpUser(email, password, fullName) {
-    // 1. Marka hore samee Auth User
-    const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: email,
-        password: password,
-    });
+const signupForm = document.getElementById('signup-form');
+const messageBox = document.getElementById('message-box');
 
-    if (authError) {
-        console.error('Error saxiixa:', authError.message);
+signupForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    // Soo qabashada xogta Form-ka
+    const fullName = document.getElementById('full-name').value;
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirm-password').value;
+    const phone = document.getElementById('phone').value;
+    const country = document.getElementById('country').value;
+    const referralId = document.getElementById('referral-code').value;
+
+    // Isbaaro: Hubi password-ka
+    if (password !== confirmPassword) {
+        showMessage("Passwords do not match!", "error");
         return;
     }
 
-    // 2. Marka uu Auth guuleysto, ku dar xogta table-ka Profiles
-    if (authData.user) {
-        const { error: profileError } = await supabase
-            .from('profiles')
-            .insert([
-                { 
-                    id: authData.user.id, // Ka soo qaad ID-ga Auth
-                    full_name: fullName, 
-                    email: email,
-                    phone: phone,
-                    country: country,
-                    referral_code: myReferralCode, // Code-ka isaga loo sameeyay
-                    referral_id: referredBy,      // Code-kii qofkii soo fariyo (Haddii uu jiro)
-                    role: 'user',                 // Default role
-                    kyc_status: 'Not Verified'
-                }
-            ]);
-
-        if (profileError) {
-            console.error('Error profile-ka:', profileError.message);
-        } else {
-            console.log('Profile-ka waa la abuuray!');
+    // 1. Is-diwaangelinta Supabase Auth
+    const { data, error } = await supabase.auth.signUp({
+        email: email,
+        password: password,
+        options: {
+            data: {
+                full_name: fullName, // Xogtan Trigger-ka ayaa akhrisanaya
+                phone: phone,
+                country: country
+            }
         }
+    });
+
+    if (error) {
+        showMessage(error.message, "error");
+    } else {
+        showMessage("Success! Check your email for verification.", "success");
+        // Halkan waxaad u diri kartaa User-ka Dashboard-ka ama login page
     }
+});
+
+function showMessage(text, type) {
+    messageBox.textContent = text;
+    messageBox.className = `message ${type}`;
+    messageBox.style.display = 'block';
 }
