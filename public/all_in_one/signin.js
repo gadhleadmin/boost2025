@@ -1,15 +1,17 @@
 import { supabase } from './supabase.js';
 
-const signinForm = document.querySelector('#signup-form'); // Hubi inuu yahay ID-ga saxda ah
+// Hubi in halkan uu ku qoran yahay ID-ga saxda ah ee Form-ka signin-ka
+const signinForm = document.querySelector('#signin-form'); 
 
 if (signinForm) {
+    console.log("Login form found!"); // Tijaabo
+
     signinForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+        console.log("Sign-in button clicked!");
 
         const email = document.querySelector('#email').value;
         const password = document.querySelector('#password').value;
-        
-        // Waxaan u beddelay 'btn-submit' maadaama uu ahaa class-ka HTML-kaaga ku jiray
         const submitBtn = document.querySelector('.btn-submit'); 
 
         if (submitBtn) {
@@ -26,21 +28,18 @@ if (signinForm) {
 
             if (authError) throw authError;
 
-            const user = authData.user;
+            console.log("Auth success, fetching profile...");
 
-            // 2. Ka soo aqri 'role' gudaha profiles
-            // FIIRO GAAR AH: Hubi in RLS Policy-ka Profiles uu oggol yahay SELECT
+            // 2. Ka soo aqri 'role'
             const { data: profile, error: profileError } = await supabase
                 .from('profiles')
                 .select('role')
-                .eq('id', user.id)
+                .eq('id', authData.user.id)
                 .single();
 
             if (profileError) throw profileError;
 
-            // 3. Jihaynta (Redirecting)
-            console.log("User role is:", profile.role);
-            
+            // 3. Jihaynta
             if (profile.role === 'admin') {
                 window.location.href = './admin.html';
             } else {
@@ -57,4 +56,6 @@ if (signinForm) {
             }
         }
     });
+} else {
+    console.error("Error: Form-ka 'signin-form' lama helin! Hubi ID-ga HTML-ka.");
 }
