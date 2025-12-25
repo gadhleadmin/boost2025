@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BoostInvest – User Dashboard</title>
     <link rel="stylesheet" href="./style.css"> 
-    <link rel="icon" href="./logo.png">
+    <link rel="icon" href="./images/logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
@@ -265,13 +265,12 @@
     <header class="main-header">
         <div class="container header-content">
            <div class="logo-name">
-            <img src="./logo.png" alt="main-logo" width="35px">
+            <img src="./images/logo.png" alt="main-logo" width="35px">
             <h1 class="logo">BoostInvest</h1>
             </div>
             <nav class="desktop-nav">
                 <ul>
                     <li><a href="dashboard.html" class="active">Dashboard</a></li>
-                    <li><a href="#trade">Trade</a></li>
                     <li><a href="#support">Support</a></li>
                     </ul>
             </nav>
@@ -296,27 +295,27 @@
                 </div>
                 
                 <div class="quick-action-item">
-                    <a href="./user-pages/transaction.html">
+                    <a href="./transaction.html">
                         <i class="fas fa-receipt"></i>
                         <span>Transactions</span>
                     </a>
                 </div>
                 
                 <div class="quick-action-item">
-                    <a href="./user-pages/deposit.html">
+                    <a href="./deposit.html">
                         <i class="fas fa-plus-circle"></i>
                         <span>Deposit</span>
                     </a>
                 </div>
                 
                 <div class="quick-action-item">
-                    <a href="./user-pages/withdraw.html">
+                    <a href="./withdraw.html">
                         <i class="fa-solid fa-money-bill"></i>
                         <span>Withdraw</span>
                     </a>
                 </div>
                   <div class="quick-action-item">
-                    <a href="./user-pages/account.html">
+                    <a href="./account.html">
                         <i class="fas fa-user-cog"></i>
                         <span>Account</span>
                     </a>
@@ -359,28 +358,28 @@
                         <h4 style="font-size: 1rem;" >Standard Plan</h4>
                         <p style="font-size: 1rem;"  class="amount">**$100**</p>
                         <p style="font-size: 0.7rem;"  class="return-rate">Earn **2% Daily**</p>
-                        <a style="font-size: 0.8rem; padding: 3px 10px;"  href="./user-pages/deposit.html" class="btn btn-secondary">Invest Now</a>
+                        <a style="font-size: 0.8rem; padding: 3px 10px;"  href="./deposit.html" class="btn btn-secondary">Invest Now</a>
                     </div>
                     <div class="package-card featured">
                         <i class="fas fa-piggy-bank package-icon"></i>
                         <h4 style="font-size: 1rem;" >Premium Plan</h4>
                         <p style="font-size: 1rem;"  class="amount">**$500**</p>
                         <p style="font-size: 0.7rem;"  class="return-rate">Earn **2.5% Daily**</p>
-                        <a style="font-size: 0.8rem; padding: 3px 10px;"  href="./user-pages/deposit.html" class="btn btn-primary">Invest Now</a>
+                        <a style="font-size: 0.8rem; padding: 3px 10px;"  href="./deposit.html" class="btn btn-primary">Invest Now</a>
                     </div>
                     <div class="package-card">
                         <i class="fas fa-chart-line package-icon"></i>
                         <h4 style="font-size: 1rem;" >Gold Plan</h4>
                         <p style="font-size: 1rem;"  class="amount">**$1000**</p>
                         <p style="font-size: 0.7rem;"  class="return-rate">Earn **3% Daily**</p>
-                        <a style="font-size: 0.8rem; padding: 3px 10px;" href="./user-pages/deposit.html" class="btn btn-secondary">Invest Now</a>
+                        <a style="font-size: 0.8rem; padding: 3px 10px;" href="./deposit.html" class="btn btn-secondary">Invest Now</a>
                     </div>
                     <div class="package-card">
                         <i class="fas fa-rocket package-icon"></i>
                         <h4 style="font-size: 1rem;" >VIP Plan</h4>
                         <p style="font-size: 1rem;"   class="amount">**$3000**</p>
                         <p style="font-size: 0.7rem;"  class="return-rate">Earn **4% Daily**</p>
-                        <a style="font-size: 0.8rem; padding: 3px 10px;"  href="./user-pages/deposit.html" class="btn btn-secondary">Invest Now</a>
+                        <a style="font-size: 0.8rem; padding: 3px 10px;"  href="./deposit.html" class="btn btn-secondary">Invest Now</a>
                     </div>
                 </div>
             </div>
@@ -474,33 +473,33 @@
             </a>
         </div>
         <div class="nav-item">
-            <a href="./user-pages/trade.html">
+            <a href="./trade.html">
                 <i class="fas fa-chart-line"></i>
                 <span>Trade</span>
             </a>
-        </div>
+        </div>  
         <div class="nav-item">
-            <a href="./user-pages/teams.html">
+            <a href="./teams.html">
                 <i class="fas fa-users-line"></i>
                 <span>Teams</span>
             </a>
         </div>
         <div class="nav-item">
-            <a href="./user-pages/account.html">
+            <a href="./account.html">
                 <i class="fas fa-user-circle"></i>
                 <span>Account</span>
             </a>
         </div>
     </nav>
 <script type="module">
-import { supabase } from '../pages/db/supabase.js';
+import { supabase } from './supabase.js';
 
 document.addEventListener("DOMContentLoaded", async function() {
     
     // --- 1. HUBINTA LOGIN-KA ---
     const { data: { user }, error: authError } = await supabase.auth.getUser();
     if (authError || !user) {
-        window.location.href = '../sub-pages/signin.html';
+        window.location.href = './signin.html';
         return;
     }
 
@@ -570,7 +569,7 @@ loadUserData();
         if (!error) {
             localStorage.clear();
             sessionStorage.clear();
-            setTimeout(() => window.location.href = '../sub-pages/signin.html', 800);
+            setTimeout(() => window.location.href = './signin.html', 800);
         } else {
             alert("Cilad: " + error.message);
             btn.classList.remove('loading');
