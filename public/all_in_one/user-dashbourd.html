@@ -595,6 +595,55 @@ loadUserData();
         }
     }, 60000); // Hubi daqiiqad kasta
 });
+
+
+
+// 🔹 HTML elements
+const referralSpan = document.getElementById("user-id-display");
+const copyBtn = document.getElementById("copy-id-btn");
+
+async function loadReferralCode() {
+    // 1. Hubi user-ka login yahay
+    const { data: { user }, error } = await supabase.auth.getUser();
+
+    if (error || !user) {
+        referralSpan.textContent = "Not logged in";
+        return;
+    }
+
+    // 2. Ka soo qaad referral_code table profiles
+    const { data, error: profileError } = await supabase
+        .from("profiles")
+        .select("referral_code")
+        .eq("id", user.id)
+        .single();
+
+    if (profileError) {
+        referralSpan.textContent = "Error";
+        console.error(profileError);
+        return;
+    }
+
+    // 3. Ku muuji UI
+    referralSpan.textContent = data.referral_code;
+}
+
+// 🔹 COPY BUTTON
+copyBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+
+    const code = referralSpan.textContent;
+
+    if (!code || code === "Loading...") return;
+
+    navigator.clipboard.writeText(code).then(() => {
+        copyBtn.title = "Waa la koobiyeyay ✔";
+        alert("Referral Code waa la koobiyeyay");
+    });
+});
+
+// Run
+loadReferralCode();
 </script>
 
 </body>
