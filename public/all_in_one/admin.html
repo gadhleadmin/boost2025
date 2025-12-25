@@ -132,13 +132,13 @@
     </main>
 
     <script type="module">
-        import { supabase } from './supabases.js';
+        import { supabase } from './supabase.js';
 
         // 1. LOGIN
         window.loginAdmin = function() {
             const u = document.getElementById('adm-user').value;
             const p = document.getElementById('adm-pass').value;
-            if(u === "admin" && p === "boost2025") {
+            if(u === "admin" && p === "admin") {
                 document.getElementById('admin-login-overlay').classList.add('hidden');
                 loadStats();
             } else { alert("Access Denied!"); }
