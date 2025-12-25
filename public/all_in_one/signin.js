@@ -43,7 +43,7 @@ if (signinForm) {
             if (profile.role === 'admin') {
                 window.location.href = './admin.html';
             } else {
-                window.location.href = './user-dashboard.html';
+                window.location.href = './user-dashbourd.html';
             }
 
         } catch (err) {
