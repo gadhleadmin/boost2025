@@ -8,7 +8,48 @@
     <link rel="icon" href="./all_in_one/images/logo.png" type="image/png">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+    
+        /* Header */
+        .main-header {
+            background: var(--primary-color);
+            color: white;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
 
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-name { display: flex; align-items: center; gap: 10px; }
+        .logo { font-size: 1.2rem; font-weight: 700; }
+
+        .logo-name h1{
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .auth-buttons { display: flex; gap: 10px; align-items: center; }
+        .btn {
+            padding: 8px 10px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 400;
+            font-size: 0.6rem;
+            transition: 0.3s;
+        }
+
+        .btn-secondary { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); }
+        .btn-signin { background: #bcac00; color: white; }
+        .btn-signin:hover { background: #a99800; }
+        .btn-signup { background: white; color: var(--primary-color); }
+        .btn-signup:hover { background: #f0f0f0; }  
+</style>
 </head>
 <body>
 
