@@ -17,6 +17,47 @@
 
         body { padding-bottom: 80px; }
 
+        
+        /* Header */
+        .main-header {
+            background: var(--primary-color);
+            color: white;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-name { display: flex; align-items: center; gap: 10px; }
+        .logo { font-size: 1.2rem; font-weight: 700; }
+
+        .logo-name h1{
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .auth-buttons { display: flex; gap: 10px; align-items: center; }
+        .btn {
+            padding: 8px 10px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 400;
+            font-size: 0.6rem;
+            transition: 0.3s;
+        }
+
+        .btn-secondary { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); }
+        .btn-signin { background: #bcac00; color: white; }
+        .btn-signin:hover { background: #a99800; }
+        .btn-signup { background: white; color: var(--primary-color); }
+        .btn-signup:hover { background: #f0f0f0; }  
+
         .about-hero {
             background: linear-gradient(rgba(20, 20, 20, 0.85), rgba(0, 94, 209, 0.4)), url('https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&q=80&w=1500');
             background-size: cover;
