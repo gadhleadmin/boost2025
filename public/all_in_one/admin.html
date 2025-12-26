@@ -56,9 +56,10 @@
         <div class="login-box">
             <i class="fas fa-user-shield" style="font-size: 3rem; color: var(--admin-bg); margin-bottom: 15px;"></i>
             <h2>BoostInvest Admin</h2>
-            <input type="text" id="adm-user" placeholder="Admin Username">
+            <p style="font-size: 0.8rem; color: #666;">Login with your Admin Account</p>
+            <input type="email" id="adm-email" placeholder="Admin Email">
             <input type="password" id="adm-pass" placeholder="Admin Password">
-            <button onclick="loginAdmin()" style="width:100%; padding:14px; background:var(--admin-bg); color:white; border:none; border-radius:8px; cursor:pointer; font-weight:600;">ACCESS CONTROL</button>
+            <button onclick="loginAdmin()" id="btn-login" style="width:100%; padding:14px; background:var(--admin-bg); color:white; border:none; border-radius:8px; cursor:pointer; font-weight:600;">ACCESS CONTROL</button>
         </div>
     </div>
 
@@ -70,7 +71,7 @@
         <div class="nav-link" onclick="showSection('withdraws', this)"><i class="fas fa-hand-holding-usd"></i> Withdrawals</div>
         <div class="nav-link" onclick="showSection('notify', this)"><i class="fas fa-bullhorn"></i> Notifications</div>
         <div style="margin-top: auto;">
-            <a href="../index.html" class="nav-link" style="color: #fb7185;"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            <button onclick="handleLogout()" class="nav-link" style="color: #fb7185; background:none; border:none; width:100%;"><i class="fas fa-sign-out-alt"></i> Logout</button>
         </div>
     </nav>
 
@@ -87,7 +88,10 @@
 
         <section id="sec-users" class="hidden">
             <div class="section-box">
-                <h2>User Management</h2>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <h2>User Management</h2>
+                    <button class="btn-sm btn-approve" onclick="loadUsers()"><i class="fas fa-sync"></i> Refresh</button>
+                </div>
                 <table id="usersTable">
                     <thead>
                         <tr><th>Name</th><th>User ID</th><th>Balance</th><th>Status</th><th>Action</th></tr>
@@ -131,20 +135,82 @@
 
     </main>
 
-   <script type="module">
+<script type="module">
     import { supabase } from './supabase.js';
 
-    // 1. LOGIN (Wuxuu shaqaynayaa marka login la gujiyo)
-    window.loginAdmin = function() {
-        const u = document.getElementById('adm-user').value;
-        const p = document.getElementById('adm-pass').value;
-        if(u === "admin" && p === "admin123") { // Password-ka bedelo
+    // 1. SECURE LOGIN (Checks Role)
+    window.loginAdmin = async function() {
+        const email = document.getElementById('adm-email').value;
+        const password = document.getElementById('adm-pass').value;
+        const btn = document.getElementById('btn-login');
+        
+        btn.innerText = "Authenticating...";
+        
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        
+        if (error) {
+            alert("Login Failed: " + error.message);
+            btn.innerText = "ACCESS CONTROL";
+            return;
+        }
+
+        // Check if user is Admin in profiles table
+        const { data: profile } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', data.user.id)
+            .single();
+
+        if (profile && profile.role === 'admin') {
             document.getElementById('admin-login-overlay').classList.add('hidden');
             loadStats();
-        } else { alert("Access Denied!"); }
+        } else {
+            alert("Access Denied: You are not an Admin!");
+            await supabase.auth.signOut();
+            location.reload();
+        }
     }
 
-    // 2. DASHBOARD STATS - Waxay soo koobaysaa xogta guud
+    // 2. LOAD ALL USERS (Fixed to show all 3+)
+    async function loadUsers() {
+        console.log("Fetching all users...");
+        // Important: We select all records without any .eq() filter
+        const { data: users, error } = await supabase
+            .from('profiles')
+            .select(`
+                id, 
+                full_name, 
+                is_active, 
+                accounts ( account_balance )
+            `);
+        
+        if (error) {
+            console.error("User Load Error:", error);
+            return;
+        }
+
+        const tbody = document.querySelector('#usersTable tbody');
+        tbody.innerHTML = '';
+        
+        if (!users || users.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center">No users found in database.</td></tr>';
+            return;
+        }
+
+        users.forEach(u => {
+            const bal = (u.accounts && u.accounts[0]) ? u.accounts[0].account_balance : 0;
+            tbody.innerHTML += `
+                <tr>
+                    <td><strong>${u.full_name || 'No Name'}</strong></td>
+                    <td><small>${u.id.substring(0,13)}...</small></td>
+                    <td style="color:#166534; font-weight:700;">$${parseFloat(bal).toLocaleString()}</td>
+                    <td><span class="badge ${u.is_active ? 'bg-success' : 'bg-pending'}">${u.is_active ? 'Active' : 'Banned'}</span></td>
+                    <td><button class="btn-sm btn-approve" onclick="alert('User: ${u.full_name}')">View</button></td>
+                </tr>`;
+        });
+    }
+
+    // 3. STATS
     async function loadStats() {
         const { count: uCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true });
         const { data: accounts } = await supabase.from('accounts').select('account_balance');
@@ -156,34 +222,9 @@
         document.getElementById('stat-pending-dep').innerText = dCount || 0;
     }
 
-    // 3. MANAGE USERS - Waxay muujinaysaa magaca iyo lacagta u taal
-    async function loadUsers() {
-        const { data: users, error } = await supabase
-            .from('profiles')
-            .select('id, full_name, is_active, accounts(account_balance)');
-        
-        const tbody = document.querySelector('#usersTable tbody');
-        tbody.innerHTML = '';
-        users.forEach(u => {
-            const bal = u.accounts?.[0]?.account_balance || 0;
-            tbody.innerHTML += `
-                <tr>
-                    <td><strong>${u.full_name || 'No Name'}</strong></td>
-                    <td><small>${u.id}</small></td>
-                    <td style="color:#166534; font-weight:700;">$${parseFloat(bal).toLocaleString()}</td>
-                    <td><span class="badge ${u.is_active ? 'bg-success' : 'bg-pending'}">${u.is_active ? 'Active' : 'Banned'}</span></td>
-                    <td><button class="btn-sm btn-approve" onclick="alert('User: ${u.full_name}')">Manage</button></td>
-                </tr>`;
-        });
-    }
-
-    // 4. DEPOSITS - Waxay la xidhiidhaa 'deposits' table
+    // 4. DEPOSITS
     async function loadDeposits() {
-        const { data: deps } = await supabase
-            .from('deposits')
-            .select('*, profiles(full_name)')
-            .eq('status', 'Pending');
-
+        const { data: deps } = await supabase.from('deposits').select('*, profiles(full_name)').eq('status', 'Pending');
         const tbody = document.querySelector('#depositTable tbody');
         tbody.innerHTML = deps && deps.length ? deps.map(d => `
             <tr>
@@ -192,19 +233,22 @@
                 <td><code>${d.txid}</code></td>
                 <td>${new Date(d.created_at).toLocaleDateString()}</td>
                 <td>
-                    <button class="btn-sm btn-approve" onclick="handleDeposit('${d.id}', 'Approved', '${d.user_id}', ${d.amount})">Approve</button>
+                    <button class="btn-sm btn-approve" onclick="handleDeposit('${d.id}', 'Approved')">Approve</button>
                     <button class="btn-sm btn-reject" onclick="handleDeposit('${d.id}', 'Rejected')">Reject</button>
                 </td>
             </tr>`).join('') : '<tr><td colspan="5" style="text-align:center">No pending deposits</td></tr>';
     }
 
-    // 5. WITHDRAWALS - Waxay isticmaalaysaa 'wallet_address' sida ku xusan SQL-kaaga
-    async function loadWithdraws() {
-        const { data: wits } = await supabase
-            .from('withdrawals')
-            .select('*, profiles(full_name)')
-            .eq('status', 'Pending');
+    window.handleDeposit = async (id, status) => {
+        if(!confirm(`Are you sure to ${status}?`)) return;
+        const { error } = await supabase.from('deposits').update({ status }).eq('id', id);
+        if(error) alert(error.message);
+        else { alert("Success!"); loadDeposits(); loadStats(); }
+    }
 
+    // 5. WITHDRAWALS
+    async function loadWithdraws() {
+        const { data: wits } = await supabase.from('withdrawals').select('*, profiles(full_name)').eq('status', 'Pending');
         const tbody = document.querySelector('#withdrawTable tbody');
         tbody.innerHTML = wits && wits.length ? wits.map(w => `
             <tr>
@@ -219,29 +263,15 @@
             </tr>`).join('') : '<tr><td colspan="5" style="text-align:center">No pending withdrawals</td></tr>';
     }
 
-    // Function-ka lagu ogolaado Deposit-ka
-    window.handleDeposit = async (id, status, uid, amt) => {
-        if(!confirm(`Ma hubtaa inaad ${status} garayso?`)) return;
-
-        const { error } = await supabase.from('deposits').update({ status }).eq('id', id);
-        if(error) return alert(error.message);
-
-        // Haddii aad leedahay Trigger SQL ah, account-ku isagaa kordhaya. 
-        // Haddii kale, halkan kaga dar code-ka kordhinaya account_balance.
-        
-        alert("Waa lagu guulaystay!");
-        loadDeposits();
-        loadStats();
+    window.handleWithdraw = async (id, status) => {
+        const { error } = await supabase.from('withdrawals').update({ status }).eq('id', id);
+        if(!error) { alert("Done!"); loadWithdraws(); }
     }
 
-    // Function-ka lagu ogolaado Withdrawal-ka
-    window.handleWithdraw = async (id, status) => {
-        if(!confirm(`Ma hubtaa inaad ka dhigto ${status}?`)) return;
-        const { error } = await supabase.from('withdrawals').update({ status }).eq('id', id);
-        if(error) return alert(error.message);
-        
-        alert("Action Completed!");
-        loadWithdraws();
+    // LOGOUT
+    window.handleLogout = async () => {
+        await supabase.auth.signOut();
+        location.reload();
     }
 
     // NAVIGATION
