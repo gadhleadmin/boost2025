@@ -31,7 +31,7 @@ signupForm.addEventListener('submit', async (e) => {
             .from('profiles')
             .select('id, referral_code')
             .eq('referral_code', referralInput)
-            .single();
+             .limit(1);
 
         if (refError || !referrer) {
             showMessage("Invalid Referral Code! Waxaad u baahan tahay code sax ah si aad isugu diwaangeliso.", "error");
