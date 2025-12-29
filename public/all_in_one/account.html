@@ -344,7 +344,7 @@
             // 1. Hubi Login
             const { data: { user }, error: authError } = await supabase.auth.getUser();
             if (authError || !user) {
-                window.location.href = '../sub-pages/signin.html';
+                window.location.href = './signin.html';
                 return;
             }
 
@@ -408,7 +408,7 @@
                     const { error } = await supabase.auth.signOut();
                     if (!error) {
                         localStorage.clear();
-                        window.location.href = '../sub-pages/signin.html';
+                        window.location.href = './signin.html';
                     } else {
                         alert("Error: " + error.message);
                         logoutBtn.classList.remove('loading');
@@ -427,7 +427,7 @@
                 if (time >= 10) { // 10 minutes
                     supabase.auth.signOut().then(() => {
                         alert("Session-kaagu wuu dhacay!");
-                        window.location.href = '../sub-pages/signin.html';
+                        window.location.href = './signin.html';
                     });
                 }
             }, 60000);
