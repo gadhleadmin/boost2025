@@ -246,63 +246,51 @@ ul {
 
 /* --- Header & Navigation --- */
 
-.main-header {
+        /* Header */
+        .main-header {
+            background: var(--primary-color);
+            color: white;
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow-light);
+            margin-top: 30px;
+        }
 
-    background-color: #fff;
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-    padding: 15px 0;
+        .logo-name { display: flex; align-items: center; gap: 10px; }
+        .logo { font-size: 1.2rem; font-weight: 700; }
 
-    box-shadow: var(--shadow-light);
+        .logo-name h1{
+            color: white;
+            font-size: 1.5rem;
+        }
 
-    position: sticky;
+        .logo-name img {
+           border-radius: 50%;
+        }
 
-    top: 0;
+        .auth-buttons { display: flex; gap: 10px; align-items: center; }
+        .btn {
+            padding: 8px 10px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 400;
+            font-size: 0.6rem;
+            transition: 0.3s;
+        }
 
-    z-index: 1000;
-
-}
-
-
-
-.header-content {
-
-    display: flex;
-
-    justify-content: space-between;
-
-    align-items: center;
-
-}
-
-
-
-.logo-name {
-
-    display: flex;
-
-}
-
-
-
-.logo-name img {
-
-    border-radius: 50%;
-
-}
-
-
-
-
-
-.logo {
-
-    font-size: 1.8em;
-
-    font-weight: 700;
-
-    color: var(--primary-color);
-
-}
+        .btn-secondary { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); }
+        .btn-signin { background: #bcac00; color: white; }
+        .btn-signin:hover { background: #a99800; }
+        .btn-signup { background: white; color: var(--primary-color); }
+        .btn-signup:hover { background: #f0f0f0; }  
 
 
 
@@ -959,7 +947,7 @@ ul {
 @media (max-width: 768px) {
 
 
-
+     
 
 
     .logo-name {
