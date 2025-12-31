@@ -255,7 +255,7 @@ ul {
             top: 0;
             z-index: 1000;
             box-shadow: var(--shadow-light);
-            margin-top: 30px;
+           
         }
 
         .header-content {
@@ -944,7 +944,13 @@ ul {
 
 
 @media (max-width: 768px) {
+       
 
+         .main-header {
+            height: 100px;
+            padding-bottom: 30px;
+            margin-bottom: 30px;
+        }
 
      
 
