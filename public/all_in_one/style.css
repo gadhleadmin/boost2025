@@ -276,23 +276,6 @@ ul {
            border-radius: 50%;
         }
 
-        .auth-buttons { display: flex; gap: 10px; align-items: center; }
-        .btn {
-            padding: 8px 10px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 400;
-            font-size: 0.6rem;
-            transition: 0.3s;
-        }
-
-        .btn-secondary { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); }
-        .btn-signin { background: #bcac00; color: white; }
-        .btn-signin:hover { background: #a99800; }
-        .btn-signup { background: white; color: var(--primary-color); }
-        .btn-signup:hover { background: #f0f0f0; }  
-
-
 
 .desktop-nav ul {
 
@@ -358,13 +341,29 @@ ul {
 
 
 
-.auth-buttons {
-
+.auth-buttons { 
     display: flex;
+    align-items: center;
+    gap: 10px; 
+   
+           padding: 5px 10px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 400;
+            font-size: 1rem;
+            transition: 0.3s;
+        }
 
-    gap: 10px;
 
-}
+.btn-secondary { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); }
+
+
+.btn-signin { background: #bcac00; color: white; }
+.btn-signin:hover { background: #a99800; }
+
+
+.btn-signup { background: white; color: var(--primary-color); }
+.btn-signup:hover { background: #f0f0f0; }  
 
 
 
