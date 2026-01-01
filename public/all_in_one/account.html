@@ -12,6 +12,28 @@
 
     <style>
 
+          .btn-secondary-id {
+            background: var(--accent-color);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-right: 10px;
+            border: 1px solid var(--white);
+        }
+
+        .btn-signout {
+            background: #ef4444;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            border: 1px solid #b91c1c;
+        }
+
+
         /* Asset Card - Wallet Look */
         .asset-card {
             background: var(--primary-color);
@@ -259,7 +281,7 @@
         .main-footer p{
         text-align: center;
         margin: 0;
-        padding: 3px 0;
+        padding: 3px 0;     
         color: #475569;
         font-size: 0.9rem;
         }
@@ -276,10 +298,10 @@
                 <h1 class="logo">BoostInvest</h1>
             </div>
             <div class="auth-buttons">
-                <a href="#" class="btn btn-secondary" id="copy-id-btn" style="margin-right: 10px; font-size: 0.8rem;">
+                <a href="#" class="btn btn-secondary-id" id="copy-id-btn" style="margin-right: 10px; font-size: 0.8rem;">
                     ID: <span id="user-id-display">...</span>
                 </a>
-                <a href="#" class="btn btn-signin" id="logout-btn">Log Out</a>
+                <a href="#" class="btn btn-signout" id="logout-btn">Log Out</a>
             </div>
         </div>
     </header>
