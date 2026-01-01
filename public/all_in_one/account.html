@@ -11,77 +11,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
     <style>
-        /* Global Styles */
-        :root {
-            --primary-gradient: linear-gradient(135deg, #1a2a6c 0%, #2c3e50 100%);
-            --glass-bg: rgba(255, 255, 255, 0.95);
-            --shadow-soft: 0 8px 30px rgba(0, 0, 0, 0.08);
-        }
-
-        body {
-            padding-bottom: 90px;
-            background-color: #f8fafc;
-            font-family: 'Poppins', sans-serif;
-        }
-
-
-        /* Header */
-        .main-header {
-            background: var(--primary-color);
-            color: white;
-            padding: 15px 0;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo-name {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .logo {
-            font-size: 1.2rem;
-            font-weight: 700;
-        }
-
-        .auth-buttons {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .btn {
-            padding: 8px 10px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 400;
-            font-size: 0.6rem;
-            transition: 0.3s;
-        }
-
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .btn-signin {
-            background: #bcac00;
-            color: white;
-        }
-
 
         /* Asset Card - Wallet Look */
         .asset-card {
-            background: var(--primary-gradient);
+            background: var(--primary-color);
             color: white;
             padding: 35px 20px;
             border-radius: 24px;
@@ -139,24 +72,24 @@
         }
 
         .action-btn {
-            background: #fff;
-            padding: 18px 10px;
+            background: #ffffff;
+            padding: 5px 10px;
             border-radius: 18px;
             text-align: center;
             text-decoration: none;
-            color: #1e293b;
+            color: var(--primary-color);
             font-weight: 600;
             font-size: 0.85rem;
             box-shadow: var(--shadow-soft);
             transition: all 0.3s ease;
-            border: 1px solid rgba(0, 0, 0, 0.02);
+            border: 2px solid rgb(6, 18, 78);
         }
 
         .action-btn i {
             display: block;
             font-size: 1.5rem;
             margin-bottom: 8px;
-            background: var(--primary-gradient);
+            background: var(--primary-color);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -171,6 +104,8 @@
             grid-template-columns: 1.5fr 1fr;
             gap: 20px;
             margin-top: 20px;
+            border: 1px dashed rgb(0, 0, 0);
+            border-radius: 12px;
         }
 
         .profile-card,
