@@ -97,21 +97,64 @@
                     <p>Your deposit of <strong id="disp-amt"></strong> is being verified.</p>
                     <p style="font-size: 0.85rem; color: #666; margin-top: 10px; display: flex ; flex-wrap: wrap;">TXID: <span id="disp-txid"></span></p>
                     <hr style="margin: 20px 0; border: 0; border-top: 1px solid #fde68a;">
-                    <a href="./deposit.html" style="text-decoration:none; color:#1a2a6c; font-weight:bold;">Return to Dashboard</a>
+                    <a href="./user-dashbourd.html" style="text-decoration:none; color:#1a2a6c; font-weight:bold;">Return to Dashboard</a>
                 </div>
             </div>
         </div>
     </main>
-
-    <script type="module">
+<script type="module">
     import { supabase } from './supabase.js';
 
-    // 1. Shaqada soo xireysa Packages-ka ka imaanaya Table-ka 'investment_packages'
+    // 1. Shaqada muujisa Screen-ka Pending-ka
+    function showPendingScreen(amount, txid) {
+        document.getElementById("deposit-form-view").style.display = "none";
+        document.getElementById("status-display").style.display = "block";
+        document.getElementById("status-display").innerHTML = `
+            <div class="status-pending-box">
+                <i class="fas fa-clock pending-icon"></i>
+                <h2 style="color: #92400e;">Codsigaaga waa Pending</h2>
+                <p>Wali waxaa gacanta lagu hayaa deposit-kaagii hore oo ahaa <b>$${amount}</b>.</p>
+                <p style="font-size: 0.8rem; color: #666; margin-top:10px;">TXID: ${txid}</p>
+                <p style="font-size: 0.9rem; margin-top: 15px;">Fadlan sug inta laga approve gareynayo ka hor inta aadan mid kale soo dirin.</p>
+                <hr style="margin: 20px 0; border: 0; border-top: 1px solid #fde68a;">
+                <a href="./user-dashbourd.html" style="display: inline-block; padding: 10px 20px; background: #1a2a6c; color: white; border-radius: 8px; text-decoration: none;">Return to Dashboard</a>
+            </div>`;
+    }
+
+    // 2. Hubinta haddii user-ku leeyahay Deposit hore oo Pending ah
+    async function checkUserStatus() {
+        try {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) {
+                window.location.href = "login.html"; // Haddii uusan login ahayn u dir login-ka
+                return;
+            }
+
+            // Hubi deposits-ka qofkan ee Pending ah
+            const { data: pendingDeposits, error } = await supabase
+                .from('deposits')
+                .select('amount, txid')
+                .eq('user_id', user.id)
+                .eq('status', 'Pending')
+                .maybeSingle(); // Waxaan rabnaa hal xabbo oo kaliya
+
+            if (error) throw error;
+
+            if (pendingDeposits) {
+                showPendingScreen(pendingDeposits.amount, pendingDeposits.txid);
+            } else {
+                // Haddii uusan lahayn pending, markaas uun soo shub packages-ka
+                fetchPackages();
+            }
+        } catch (err) {
+            console.error("Cilad hubinta user-ka:", err.message);
+        }
+    }
+
+    // 3. Soo xirista Packages-ka
     async function fetchPackages() {
         const selectElement = document.getElementById('packageSelect');
-        
         try {
-            // Ka soo qaad xogta: package_name, amount, iyo daily_return
             const { data: packages, error } = await supabase
                 .from('investment_packages')
                 .select('id, package_name, amount, daily_return')
@@ -119,46 +162,20 @@
 
             if (error) throw error;
 
-            // Nadiifi dropdown-ka inta aan xogta lagu shubin
-            selectElement.innerHTML = '<option value="" disabled selected>Dooro Package-kaaga...</option>';
-
-            // Mid mid ugu shub dropdown-ka
+            selectElement.innerHTML = '<option value="" disabled selected>Select Your Package...</option>';
             packages.forEach(pkg => {
                 const option = document.createElement('option');
-                option.value = pkg.id; // Wuxuu kaydinayaa UUID-ga package-ka
-                option.setAttribute('data-amount', pkg.amount); // Cadadka lacagta
-                
-                // Muuqaalka qofka u muuqanaya: Magaca ($Lacagta) - Faaiidada
+                option.value = pkg.id;
+                option.setAttribute('data-amount', pkg.amount);
                 option.textContent = `${pkg.package_name} ($${pkg.amount}) - Daily: ${pkg.daily_return}%`;
-                
                 selectElement.appendChild(option);
             });
-
         } catch (err) {
-            console.error("Cilad xogta: ", err.message);
             selectElement.innerHTML = '<option disabled>Error loading packages</option>';
         }
     }
 
-    // Bilow soo kicinta xogta markii bogga la furo
-    fetchPackages();
-
-    // 2. Qaybta koobiga Address-ka
-    window.copyAddr = function() {
-        const addr = document.getElementById("walletAddr").innerText;
-        navigator.clipboard.writeText(addr).then(() => {
-            const btn = document.getElementById("copyBtn");
-            const originalHTML = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-check"></i>';
-            btn.style.color = "#22c55e";
-            setTimeout(() => {
-                btn.innerHTML = originalHTML;
-                btn.style.color = "";
-            }, 2000);
-        });
-    }
-
-    // 3. Dirista foomka iyo kaydinta 'deposits'
+    // 4. Markii foomka la submit gareeyo
     document.getElementById('depositForm').addEventListener('submit', async (e) => {
         e.preventDefault();
         const submitBtn = document.getElementById('submitBtn');
@@ -166,20 +183,14 @@
         const txidInput = document.getElementById("txid");
 
         submitBtn.disabled = true;
-        submitBtn.innerHTML = 'Processing...';
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
 
         try {
             const { data: { user } } = await supabase.auth.getUser();
-            if (!user) {
-                alert("Fadlan marka hore gal akoonkaaga (Login)");
-                return;
-            }
-
             const selectedOption = packageSelect.selectedOptions[0];
             const amount = selectedOption.getAttribute('data-amount');
             const txid = txidInput.value;
 
-            // Ku rido table-ka deposits
             const { error } = await supabase.from('deposits').insert([
                 { 
                     user_id: user.id, 
@@ -191,19 +202,7 @@
             ]);
 
             if (error) throw error;
-
-            // Markii ay guulaysato, muuji Pending Screen
-            document.getElementById("deposit-form-view").style.display = "none";
-            document.getElementById("status-display").style.display = "block";
-            document.getElementById("status-display").innerHTML = `
-                <div class="status-pending-box" style="text-align: center; padding: 40px; background: #fffbeb; border-radius: 20px; border: 1px solid #fef3c7;">
-                    <i class="fas fa-clock" style="font-size: 4rem; color: #f59e0b; margin-bottom: 20px;"></i>
-                    <h2 style="color: #92400e;">Gudbin Guulaystay!</h2>
-                    <p>Lacagtaada oo ah <b>$${amount}</b> waxay ku jirtaa dib-u-eegis (Pending).</p>
-                    <p style="font-size: 0.8rem; color: #666;">TXID: ${txid}</p>
-                    <br>
-                    <a href="./user-dashbourd.html" style="display: inline-block; padding: 10px 20px; background: #1a2a6c; color: white; border-radius: 8px; text-decoration: none;">Ku laabo Dashboard</a>
-                </div>`;
+            showPendingScreen(amount, txid);
 
         } catch (err) {
             alert("Cilad: " + err.message);
@@ -211,6 +210,20 @@
             submitBtn.innerHTML = 'COMPLETED';
         }
     });
+
+    // 5. Nuqul Address (Copy function)
+    window.copyAddr = function() {
+        const addr = document.getElementById("walletAddr").innerText;
+        navigator.clipboard.writeText(addr).then(() => {
+            const btn = document.getElementById("copyBtn");
+            btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+            setTimeout(() => { btn.innerHTML = '<i class="fas fa-copy"></i> Copy'; }, 2000);
+        });
+    }
+
+    // BILOW: Hubi xaaladda user-ka isla marka boggu load noqdo
+    checkUserStatus();
+
 </script>
 
 </body>
