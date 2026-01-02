@@ -78,6 +78,19 @@ button {
   text-align: center;
   margin-top: 10px;
 }
+
+        footer{
+        margin-top: 40px;
+        background: #f1f5f9;
+        }
+
+        .main-footer p{
+        text-align: center;
+        margin: 0;
+        padding: 3px 0;     
+        color: #475569;
+        font-size: 0.9rem;
+        }
 </style>
 </head>
 
@@ -135,7 +148,13 @@ button {
   <button id="tradeBtn">Trade</button>
 
   <div id="status"></div>
+
+
 </div>
+
+  <footer class="main-footer">
+            <p>&copy; 2024 BoostInvest. All rights reserved.</p>
+  </footer>
 
 <script type="module">
     import { supabase } from './supabase.js';
@@ -235,6 +254,41 @@ button {
             statusDiv.innerText = "❌ Cilad ayaa dhacday.";
         }
     });
+     
+
+
+       // 3. Copy ID Function
+            function setupCopy(code) {
+                const btn = document.getElementById('copy-id-btn');
+                btn.onclick = (e) => {
+                    e.preventDefault();
+                    navigator.clipboard.writeText(code);
+                    const old = btn.innerHTML;
+                    btn.innerHTML = "Copied! ✅";
+                    setTimeout(() => btn.innerHTML = old, 2000);
+                };
+            }
+
+              // 4. Log Out with Spinner
+            const logoutBtn = document.getElementById('logout-btn');
+            logoutBtn.addEventListener('click', async (e) => {
+                e.preventDefault();
+                if (confirm("Ma hubtaa inaad baxayso?")) {
+                    logoutBtn.classList.add('loading');
+                    logoutBtn.innerHTML = `<span class="spinner"></span> Safar nabad ah...`;
+
+                    const { error } = await supabase.auth.signOut();
+                    if (!error) {
+                        localStorage.clear();
+                        window.location.href = './signin.html';
+                    } else {
+                        alert("Error: " + error.message);
+                        logoutBtn.classList.remove('loading');
+                        logoutBtn.innerHTML = "Log Out";
+                    }
+                }
+            });
+    
 </script>
 
 
