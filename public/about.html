@@ -129,24 +129,43 @@
 </head>
 <body>
 
-   <header class="main-header">
-        <div class="container header-content">
+  
+<header class="main-header">
+    <div class="container header-content">
+     
+
+        <!-- Hamburger Button -->
+        <button class="hamburger" aria-label="Toggle Menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </button>
+
+        <!-- Mobile Menu -->
+        <nav class="mobile-nav">
+
             <div class="logo-name">
             <img src="./all_in_one/images/logo.png" alt="main-logo" width="35px">
             <h1 class="logo">BoostInvest</h1>
             </div>
-            <nav class="desktop-nav">
-                <ul>
-                    <li><a href="../index.html" class="active">Home</a></li>
-                    <li><a href="#about-us">About</a></li>
-                </ul>
-            </nav>
-            <div class="auth-buttons">
-                <a href="./signup.html" class="btn btn-signup">Sign Up</a>
-                <a href="./signin.html" class="btn btn-signin">Sign In</a>
-            </div>
-            </div>
-    </header>
+
+    <div class="mobile-nav-links">
+    <a href="#home"><i class="fas fa-house"></i> Home</a>
+    <a href="#packages"><i class="fas fa-money-bill-wave"></i> Investment Plans</a>
+    <a href="#contact"><i class="fas fa-headset"></i> Support</a>
+    <a href="./about.html"><i class="fas fa-info-circle"></i> About Us</a> 
+</div>
+<hr>
+
+<ul>
+    <li><a href="./all_in_one/signup.html"><i class="fas fa-user-plus"></i> Sign Up</a></li>
+    <li><a href="./all_in_one/signin.html"><i class="fas fa-right-to-bracket"></i> Sign In</a></li>
+</ul>
+        </nav>
+
+    </div>
+</header>
+
 
     <main>
         <section class="about-hero">
@@ -413,5 +432,14 @@
 
         observer.observe(document.querySelector('.stats-container'));
     </script>
+      <script>// script.js
+const hamburger = document.querySelector(".hamburger");
+const mobileNav = document.querySelector(".mobile-nav");
+
+hamburger.addEventListener("click", () => {
+    mobileNav.classList.toggle("active");
+});
+
+</script>
 </body>
 </html>
