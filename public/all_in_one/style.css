@@ -1238,3 +1238,15 @@ ul {
 
     }
 }
+
+        footer{
+        background: #f1f5f9;
+        }
+
+        .main-footer p{
+        text-align: center;
+        margin: 0;
+        padding: 3px 0;     
+        color: #475569;
+        font-size: 0.9rem;
+        }
