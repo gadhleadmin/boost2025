@@ -11,24 +11,32 @@
 </head>
 <body>
 
-    <header class="main-header">
-        <div class="container header-content">
-            <div class="logo-name">
+<header class="main-header">
+    <div class="container header-content">
+        <div class="logo-name">
             <img src="./all_in_one/images/logo.png" alt="main-logo" width="35px">
             <h1 class="logo">BoostInvest</h1>
-            </div>
-            <nav class="desktop-nav">
-                <ul>
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="./about.html">About</a></li>
-                </ul>
-            </nav>
-            <div class="auth-buttons">
-                <a href="./all_in_one/signup.html" class="btn-signup">Sign Up</a>
-                <a href="./all_in_one/signin.html" class="btn-signin">Sign In</a>
-            </div>
-            </div>
-    </header>
+        </div>
+
+        <!-- Hamburger Button -->
+        <button class="hamburger" aria-label="Toggle Menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </button>
+
+        <!-- Mobile Menu -->
+        <nav class="mobile-nav">
+            <ul>
+                <li><a href="./all_in_one/signup.html">Sign Up</a></li>
+                <li><a href="./all_in_one/signin.html">Sign In</a></li>
+            </ul>
+        </nav>
+
+    </div>
+</header>
+
+
     
     <main>
         <section id="home" class="hero-section">
@@ -207,5 +215,34 @@
     </nav>
 
     <script type="module" src="./all_in_one/script.js"></script>
+    <script>
+        // Counter Animation
+        const counters = document.querySelectorAll('.counter');
+        counters.forEach(counter => {
+            counter.innerText = '0';
+            const updateCounter = () => {
+                const target = +counter.getAttribute('data-target');
+                const current = +counter.innerText;
+                const increment = target / 200; // Adjust speed here
+
+                if (current < target) {
+                    counter.innerText = `${Math.ceil(current + increment)}`;
+                    setTimeout(updateCounter, 10);
+                } else {
+                    counter.innerText = target;
+                }
+            };
+            updateCounter();
+        }); 
+    </script>
+    <script>// script.js
+const hamburger = document.querySelector(".hamburger");
+const mobileNav = document.querySelector(".mobile-nav");
+
+hamburger.addEventListener("click", () => {
+    mobileNav.classList.toggle("active");
+});
+
+</script>
 </body>
 </html>
