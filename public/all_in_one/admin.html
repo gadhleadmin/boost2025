@@ -98,7 +98,7 @@
                 </div>
                 <table id="usersTable">
                     <thead>
-                        <tr><th>Name</th><th>User ID</th><th>Balance</th><th>Status</th><th>Action</th></tr>
+                        <tr><th>Name</th><th>Email</th><th>Balance</th><th>Status</th><th>Action</th></tr>
                     </thead>
                     <tbody></tbody>
                 </table>
@@ -176,51 +176,71 @@
     }
 
     // 2. LOAD ALL USERS (Fixed to show all 3+)
-    async function loadUsers() {
-        console.log("Fetching all users...");
-        // Important: We select all records without any .eq() filter
-        const { data: users, error } = await supabase
-            .from('profiles')
-            .select(`
-                id, 
-                full_name, 
-                is_active, 
-                accounts ( account_balance )
-            `);
-        
-        if (error) {
-            console.error("User Load Error:", error);
-            return;
-        }
-
-        const tbody = document.querySelector('#usersTable tbody');
-        tbody.innerHTML = '';
-        
-        if (!users || users.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center">No users found in database.</td></tr>';
-            return;
-        }
-
-        users.forEach(u => {
-            const bal = (u.accounts && u.accounts[0]) ? u.accounts[0].account_balance : 0;
-            tbody.innerHTML += `
-                <tr>
-                    <td><strong>${u.full_name || 'No Name'}</strong></td>
-                    <td><small>${u.id.substring(0,13)}...</small></td>
-                    <td style="color:#166534; font-weight:700;">$${parseFloat(bal).toLocaleString()}</td>
-                    <td><span class="badge ${u.is_active ? 'bg-success' : 'bg-pending'}">${u.is_active ? 'Active' : 'Banned'}</span></td>
-                    <td><button class="btn-sm btn-approve" onclick="alert('User: ${u.full_name}')">View</button></td>
-                </tr>`;
-        });
+     async function loadUsers() {
+    console.log("Fetching all users...");
+    
+    // MUHIIM: Waxaan ka saarnay account_balance, waxaana ku bedelnay package_amount iyo earnings
+    const { data: users, error } = await supabase
+        .from('profiles')
+        .select(`
+            id,
+            full_name, 
+            email,
+            is_active, 
+            accounts ( 
+                package_amount, 
+                earnings 
+            )
+        `);
+    
+    if (error) {
+        console.error("User Load Error:", error);
+        return;
     }
+
+    console.log("Xogta cusub:", users); // Fiiri halkan hadda 'accounts' ma null baa?
+
+    const tbody = document.querySelector('#usersTable tbody');
+    tbody.innerHTML = '';
+    
+    if (!users || users.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center">No users found.</td></tr>';
+        return;
+    }
+
+    users.forEach(u => {
+        // 1. Hubi haddii uu account leeyahay
+        const acc = (u.accounts && u.accounts.length > 0) ? u.accounts[0] : (u.accounts || null);
+        
+        // 2. Isugeyga (Package + Earnings)
+        //parseFloat waxay hubinaysaa in string loo bedelo number
+        const pAmount = acc && acc.package_amount ? parseFloat(acc.package_amount) : 0;
+        const eAmount = acc && acc.earnings ? parseFloat(acc.earnings) : 0;
+        
+        const totalBalance = pAmount + eAmount;
+
+        tbody.innerHTML += `
+            <tr>
+                <td><strong>${u.full_name || 'No Name'}</strong></td>
+                <td><small>${u.email ? u.email.substring(0,15) : 'N/A'}...</small></td>
+                <td style="color:#166534; font-weight:700;">$${totalBalance.toLocaleString()}</td>
+                <td>
+                    <span class="badge ${u.is_active ? 'bg-success' : 'bg-danger'}">
+                        ${u.is_active ? 'Active' : 'Banned'}
+                    </span>
+                </td>
+                <td><button class="btn-sm btn-approve" onclick="alert('User: ${u.full_name}')">View</button></td>
+            </tr>`;
+    });
+}
 
     // 3. STATS
     async function loadStats() {
         const { count: uCount } = await supabase.from('profiles').select('*', { count: 'exact', head: true });
-        const { data: accounts } = await supabase.from('accounts').select('account_balance');
+        const { data: accounts } = await supabase.from('accounts').select('package_amount');
         const { count: dCount } = await supabase.from('deposits').select('*', { count: 'exact', head: true }).eq('status', 'Pending');
         
-        const total = accounts ? accounts.reduce((sum, a) => sum + (parseFloat(a.account_balance) || 0), 0) : 0;
+        const total = accounts ? accounts.reduce((sum, a) => sum + (parseFloat(a.package_amount) || 0), 0) : 0;
         document.getElementById('stat-users').innerText = uCount || 0;
         document.getElementById('stat-invested').innerText = `$${total.toLocaleString()}`;
         document.getElementById('stat-pending-dep').innerText = dCount || 0;
