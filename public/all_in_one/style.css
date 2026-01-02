@@ -102,6 +102,8 @@ ul {
     top: 20px;
     left: 20px;       /* bidix ka dhig */
     z-index: 1001;
+    margin-top: 20px;
+    
 }
 
 .hamburger .bar {
@@ -125,6 +127,7 @@ ul {
     padding-top: 60px;
     z-index: 1000;
     overflow-y: auto;
+
 }
 
 .mobile-nav.active {
@@ -145,8 +148,8 @@ ul {
 }
 
 .mobile-nav .logo-name .logo {
-    font-size: 18px;
-    font-weight: bold;
+    font-size: 14px;
+    font-family: verdana;
 }
 
 /* Links gudaha menu */
@@ -159,6 +162,7 @@ ul {
     text-decoration: none;
     padding: 12px 20px;
     font-size: 16px;
+    font-family: verdana;
     transition: background 0.3s;
 }
 
@@ -184,6 +188,9 @@ ul {
     padding: 0;
 }
 
+.logo-name{
+    margin-top: 30px;
+}
 
 /* Header */
 .main-header {
