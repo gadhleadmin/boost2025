@@ -87,89 +87,101 @@ ul {
 
 
 /* --- Header & Navigation --- */
-/* Header General */
-.main-header {
-    background-color: #fff;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    position: relative;
-    z-index: 1000;
-}
-
-.header-content {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 20px;
-}
-
-/* Hamburger */
+/* Sticky Header */
+/* ---------------- Hamburger Button ---------------- */
 .hamburger {
-    display: none;
+    display: flex;
     flex-direction: column;
     justify-content: space-between;
-    width: 25px;
-    height: 20px;
+    width: 30px;
+    height: 22px;
     background: none;
     border: none;
     cursor: pointer;
+    position: fixed;  /* had iyo jeer top-left muuqdo */
+    top: 20px;
+    left: 20px;       /* bidix ka dhig */
+    z-index: 1001;
 }
 
 .hamburger .bar {
-    height: 3px;
+    height: 4px;
     width: 100%;
-    background-color: #ffffff;
-    border-radius: 3px;
+    background-color: var(--accent-color);
+    border-radius: 2px;
+    transition: all 0.3s;
 }
 
-/* Mobile Nav */
+/* ---------------- Mobile Menu ---------------- */
 .mobile-nav {
-    display: flex;
+    position: fixed;
+    top: 0;
+    left: -260px;      /* menu-ka bilow ahaan ka bax */
+    width: 260px;
+    height: 100%;
+    background-color: var(--primary-color);
+    color: white;
+    transition: 0.3s;
+    padding-top: 60px;
+    z-index: 1000;
+    overflow-y: auto;
 }
 
-.mobile-nav ul {
-    display: flex;
-    gap: 20px;
-    list-style: none;
-    margin: 0;
-    padding: 0;
+.mobile-nav.active {
+    left: 0;  /* Markuu furan yahay */
 }
 
-.mobile-nav a {
+/* Logo gudaha menu */
+.mobile-nav .logo-name {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 20px 20px 20px;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+}
+
+.mobile-nav .logo-name img {
+    width: 35px;
+}
+
+.mobile-nav .logo-name .logo {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+/* Links gudaha menu */
+.mobile-nav-links a,
+.mobile-nav ul li a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: white;
     text-decoration: none;
-    color: #000000;
-    font-weight: 500;
-    padding: 3px 10px;
-    border: 1px solid #000000;
+    padding: 12px 20px;
+    font-size: 16px;
+    transition: background 0.3s;
+}
+
+.mobile-nav-links a:hover,
+.mobile-nav ul li a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
     border-radius: 5px;
 }
 
-/* Responsive */
-@media screen and (max-width: 768px) {
-    .hamburger {
-        display: flex;
-    }
+.mobile-nav i {
+    min-width: 20px;
+    text-align: center;
+}
 
-    .mobile-nav {
-        position: absolute;
-        top: 70px;
-        right: 0;
-        background-color: #fff;
-        flex-direction: column;
-        width: 200px;
-        padding: 10px 0;
-        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        display: none;
-    }
+/* ul links (Sign Up / Sign In) */
+.mobile-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
 
-    .mobile-nav.active {
-        display: flex;
-    }
-
-    .mobile-nav ul {
-        flex-direction: column;
-        gap: 10px;
-        align-items: center;
-    }
+.mobile-nav ul li {
+    padding: 0;
 }
 
 
@@ -179,7 +191,8 @@ ul {
     background: var(--primary-color);
     color: white;
     padding: 15px 0;
-    position: sticky;
+    position:absolute;
+    width: 100%;
     top: 0;
     z-index: 1000;
     box-shadow: var(--shadow-light);
@@ -789,7 +802,6 @@ ul {
     .auth-buttons {
 
         display: flex;
-
         gap: 5px;
 
     }
