@@ -312,19 +312,35 @@ ul {
     margin-bottom: 5px;
 }
 
-.hero-content p {
-    font-size: 1.2em;
-    margin-bottom: 30px;
-    font-weight: 300;
+.text-gradient {
+    background: linear-gradient(90deg, #4facfe, #00f2fe);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    /* optional */
+    font-weight: 500;
 }
 
+
+
 .btn-hero {
-    background-color: var(--accent-color);
+    display: inline-block;   /* MUHIIM */
+    background-image: linear-gradient(90deg,#ffb300 , #0f172a);
     color: var(--light-text-color);
     font-size: 1.2em;
     padding: 12px 30px;
     border-radius: 8px;
-    transition: background-color 0.3s;
+    cursor: pointer;
+
+    animation: bounce 1.8s infinite;
+}
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-12px);
+    }
 }
 
 
