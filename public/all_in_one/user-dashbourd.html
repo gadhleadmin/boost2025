@@ -14,6 +14,13 @@
 
 
         .container { width: 100%; max-width: 1200px; margin: 0 auto; }
+
+        .header-content{
+            display: flex;
+            justify-content: space-between;
+        }
+
+
         
         .btn-secondary-id {
             background: var(--accent-color);
@@ -294,17 +301,31 @@
 <body>
 
     <header class="main-header">
-        <div class="container header-content">
+        <div class="container user-header-content">
+            
+                    <!-- Hamburger Button -->
+        <button class="hamburger" aria-label="Toggle Menu">
+            <span class="bar"></span>
+            <span class="bar"></span>
+            <span class="bar"></span>
+        </button>
+
+        <!-- Mobile Menu -->
+        <nav class="mobile-nav">
             <div class="logo-name">
-                <img src="./images/logo.png" alt="logo" width="30" >
-                <h1 class="logo">BoostInvest</h1>
+            <img src="./images/logo.png" alt="main-logo" width="35px">
+            <h1 class="logo">BoostInvest</h1>
             </div>
-            <div class="auth-buttons">
+        
+        
+
+            <div style="margin: 20px;" class="auth-buttons">
                 <a href="#" class="btn btn-secondary-id" id="copy-id-btn">
                     ID: <span id="user-id-display">...</span>
                 </a>
                 <a href="#" class="btn btn-signout" id="logout-btn">Log Out</a>
             </div>
+            </nav>
         </div>
     </header>
     
@@ -518,6 +539,16 @@ new TradingView.widget({
     "allow_symbol_change": true,
     "container_id": "tv_chart"
 });
+</script>
+
+    <script>// script.js
+const hamburger = document.querySelector(".hamburger");
+const mobileNav = document.querySelector(".mobile-nav");
+
+hamburger.addEventListener("click", () => {
+    mobileNav.classList.toggle("active");
+});
+
 </script>
 
 </body>
