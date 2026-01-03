@@ -374,7 +374,7 @@ ul {
     background-color: var(--primary-color);
     color: var(--light-text-color);
     transform: scale(1.05);
-    box-shadow: 0px 4px 6px rgba(200, 234, 255, 0.324);
+    box-shadow: 0px 4px 6px rgba(200, 234, 255, 0.107);
    
 }
 
@@ -404,7 +404,7 @@ ul {
     border-radius: 8px;
     font-size: 1em;
     transition: background-color 0.3s;
-    box-shadow: 0px 4px 6px rgba(255, 255, 255, 0.171);
+    border: 0.3px dashed var(--light-text-color);
 }
 
 .btn-secondary:hover {
@@ -436,23 +436,14 @@ ul {
 }
 
 
-
-.package-card .amount {
-    font-size: 2em;
-    font-weight: 700;
-    margin: 10px 0;
-    color: var(--accent-color);
-}
-
-.package-card.featured .amount {
+.package-card.featured  {
     color: #ffd700;
-   
-    /* Gold for highlight */
 }
 
-.amount {
-    font-family: 'Arial Black', sans-serif;
-    margin: 0 auto;
+.package-amount {
+       font-size: 2rem;
+       padding-bottom: 20px;
+       font-family:pobbins;
 
 }
 
@@ -494,16 +485,52 @@ ul {
     letter-spacing: 2px;
     opacity: 0.8;
 }
+/* --- why you choose us --- */
 
+.why-choose-us {
+    padding: 80px 0;
+    background-color: var(--white);
+    color: var(--light-text-color);
+    text-align: center;
+}
+
+.choose-us-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 30px;
+    text-align: center;
+    padding-bottom: 80px;
+}
+
+.choose-us-grid .choose-us-card {
+    background-color: var(--bg-card);
+    padding: 30px;
+    border-radius: 12px;
+    border: 1px solid var(--border-glass);
+    box-shadow: 0px 4px 6px rgba(27, 168, 255, 0.071);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.choose-us-grid i {
+    font-size: 2.5em;
+    color: var(--accent-color);
+    margin-bottom: 15px;
+}
 
 
 /* --- Mobile App Section --- */
 
 .mobile-app-section {
     padding: 80px 0;
-    background-color: #fff;
-}
 
+    background-image:
+        linear-gradient(90deg, rgba(25, 73, 141, 0.85), rgba(15, 23, 42, 0.85)),
+        url("https://risemalaysia.com.my/wp-content/uploads/2023/03/Screenshot-2023-03-17-174614.jpg");
+
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+}
 
 
 .app-content {
@@ -512,15 +539,17 @@ ul {
     align-items: center;
     gap: 50px;
     flex-wrap: wrap;
+  
 }
 
 .app-text {
     flex: 1;
     min-width: 300px;
+    
 }
 
 .app-text .section-title {
-    text-align: left;
+    text-align: center;
     margin-bottom: 20px;
 }
 
