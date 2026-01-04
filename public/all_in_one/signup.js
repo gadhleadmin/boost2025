@@ -26,35 +26,36 @@ signupForm.addEventListener('submit', async (e) => {
     submitBtn.disabled = true;
 
     try {
-        // 3. Hubi haddii Referral Code-ka uu jiro (Validation)
+        // 3. Hubi haddii Referral Code-ka uu dhab ahaan u jiro
         const { data: referrer, error: refError } = await supabase
             .from('profiles')
             .select('id, referral_code')
             .eq('referral_code', referralInput)
-             .limit(1);
+            .maybeSingle(); 
 
-        if (refError || !referrer) {
+        if (refError) throw refError;
+
+        // Isbaaro: Haddii code-ka la heli waayo
+        if (!referrer) {
             showMessage("Invalid Referral Code! Waxaad u baahan tahay code sax ah si aad isugu diwaangeliso.", "error");
-            submitBtn.innerText = "Sign Up Now";
-            submitBtn.disabled = false;
-            return; // Halkan ku jooji, ha u gudbin signUp
+            return; 
         }
 
-        // 4. Haddii uu code-ku sax yahay, hadda samee Is-diwaangelinta Auth
+        // 4. Haddii uu code-ku sax yahay, samee Is-diwaangelinta
         submitBtn.innerText = "Creating Account...";
-          // Qaybta signUp ee koodkaaga ku jirta ka dhig sidan:
-const { data, error: authError } = await supabase.auth.signUp({
-    email: email,
-    password: password,
-    options: {
-        data: {
-            full_name: fullName,
-            phone: phone,
-            country: country,
-            referral_id: referralInput // Tani waxay galaysaa 'raw_user_meta_data'
-        }
-    }
-});
+        const { data, error: authError } = await supabase.auth.signUp({
+            email: email,
+            password: password,
+            options: {
+                data: {
+                    full_name: fullName,
+                    phone: phone,
+                    country: country,
+                    referral_id: referralInput 
+                }
+            }
+        });
+
         if (authError) throw authError;
 
         showMessage("Success! Check your email for verification.", "success");
@@ -66,7 +67,7 @@ const { data, error: authError } = await supabase.auth.signUp({
         submitBtn.innerText = "Sign Up Now";
         submitBtn.disabled = false;
     }
-});
+}); // <--- Tani waxay ahayd midda kaa dhiman!
 
 function showMessage(text, type) {
     messageBox.textContent = text;
