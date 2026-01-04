@@ -42,19 +42,19 @@ signupForm.addEventListener('submit', async (e) => {
 
         // 4. Haddii uu code-ku sax yahay, hadda samee Is-diwaangelinta Auth
         submitBtn.innerText = "Creating Account...";
-        const { data, error: authError } = await supabase.auth.signUp({
-            email: email,
-            password: password,
-            options: {
-                data: {
-                    full_name: fullName,
-                    phone: phone,
-                    country: country,
-                    referral_id: referralInput // Kan waxaa isticmaali doona Trigger-kaaga
-                }
-            }
-        });
-
+          // Qaybta signUp ee koodkaaga ku jirta ka dhig sidan:
+const { data, error: authError } = await supabase.auth.signUp({
+    email: email,
+    password: password,
+    options: {
+        data: {
+            full_name: fullName,
+            phone: phone,
+            country: country,
+            referral_id: referralInput // Tani waxay galaysaa 'raw_user_meta_data'
+        }
+    }
+});
         if (authError) throw authError;
 
         showMessage("Success! Check your email for verification.", "success");
