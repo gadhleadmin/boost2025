@@ -188,8 +188,8 @@ button {
     const timeframeSelect = document.getElementById("timeframe");
     const typeSelect = document.getElementById("type");
 
-    const TRADE_START = 14 * 60;      // 14:00
-    const TRADE_END = 14 * 60 + 10;   // 14:10
+    const TRADE_START = 15 * 60;     
+    const TRADE_END = 16 * 60 + 10;   
 
     // 1. Soo qaado xogta maanta ee database-ka
     async function fetchTodaySetup() {
@@ -234,49 +234,58 @@ button {
     updateButton();
     setInterval(updateButton, 10000); // Hubi waqtiga 10-kii ilbiriqsiba
 
-    tradeBtn.addEventListener("click", async () => {
-        if (!tradeOpen()) {
-            alert("Trade waqtigiisu ma furan");
-            return;
-        }
+  tradeBtn.addEventListener("click", async () => {
+    if (!tradeOpen()) {
+        alert("Trade waqtigiisu ma furan");
+        return;
+    }
 
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) {
-            alert("Fadlan login sameey");
-            return;
-        }
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+        alert("Fadlan login sameey");
+        return;
+    }
 
-        const today = new Date().toISOString().split("T")[0];
-        const userChoice = `${pairSelect.value} ${timeframeSelect.value} ${typeSelect.value}`;
+    const today = new Date().toISOString().split("T")[0];
+    
+    // Xogta laga soo qaatay Select boxes
+    const pair = pairSelect.value;
+    const timeframe = timeframeSelect.value;
+    const type = typeSelect.value;
+    const userChoice = `${pair} ${timeframe} ${type}`;
 
-        // Hubi haduu mar hore trade-gareeyay
-        const { data: exists } = await supabase
-            .from("trade_history")
-            .select("id")
-            .eq("user_id", user.id)
-            .eq("trade_date", today);
+    // 1. Hubi haduu mar hore trade-gareeyay
+    const { data: exists, error: checkError } = await supabase
+        .from("trade_history")
+        .select("id")
+        .eq("user_id", user.id)
+        .eq("trade_date", today);
 
-        if (exists && exists.length > 0) {
-            statusDiv.innerText = "❌ Maanta mar hore ayaad trade-garaysay!";
-            return;
-        }
+    if (exists && exists.length > 0) {
+        statusDiv.innerText = "❌ Maanta mar hore ayaad trade-garaysay!";
+        return;
+    }
 
-        // Geli trade-ka cusub
-        const { error } = await supabase.from("trade_history").insert({
-            user_id: user.id,
-            user_choice: userChoice,
-            trade_date: today,
-            status: "PENDING"
-        });
-
-        if (!error) {
-            statusDiv.innerText = "✅ Trade-kaaga waa la gudbiyey!";
-            tradeBtn.classList.add("disabled");
-        } else {
-            statusDiv.innerText = "❌ Cilad ayaa dhacday.";
-        }
+    // 2. Geli trade-ka (Halkan ka hubi in dhammaan columns-ka NOT NULL ay ku jiraan)
+    const { error } = await supabase.from("trade_history").insert({
+        user_id: user.id,
+        trade_date: today,
+        pair: pair,            // Column-kan waa loo baahnaa
+        timeframe: timeframe,  // Column-kan waa loo baahnaa
+        trade_type: type,      // Column-kan waa loo baahnaa
+        user_choice: userChoice,
+        status: "PENDING"
     });
-     
+
+    if (!error) {
+        statusDiv.innerText = "✅ Trade-kaaga waa la gudbiyey!";
+        tradeBtn.classList.add("disabled");
+        tradeBtn.innerText = "Trade Submitted";
+    } else {
+        console.error("Supabase Error:", error); // Tani waxay ku tusaysaa console-ka haddii qalad kale jiro
+        statusDiv.innerText = "❌ Cilad ayaa dhacday: " + error.message;
+    }
+});
 
 
        // 3. Copy ID Function
